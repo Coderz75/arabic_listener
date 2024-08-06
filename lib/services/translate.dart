@@ -1,7 +1,16 @@
-import 'stemmer.dart'
+import 'stemmer.dart';
+import 'package:flutter/services.dart';
+import 'dart:convert';
 
-class translator{
-
+class Translator{
+  Map<String,dynamic> data ={};
+  Translator(){
+    init();
+  }
+  void init() async {
+    String response = await rootBundle.loadString('assets/new_data.json');
+    data = await json.decode(response);
+  }
   List translate(String input){
     List wordData =[];
     for(int i = 0; i < input.split(' ').length; i++) {
