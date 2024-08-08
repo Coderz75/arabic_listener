@@ -21,6 +21,11 @@ class Stemmer{
     return newString;
   }
 
+  static String removeAllHarakat(String word){
+    word = removeAll(word, RegExp(r'\p{M}', caseSensitive: false, unicode: true), []);
+    return word;
+  }
+
   static String wordStemmer(var word){
     //Remove diacritics
     word = removeAll(word, RegExp(r'\p{M}', caseSensitive: false, unicode: true), []);
