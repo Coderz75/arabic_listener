@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
-class Speech extends StatelessWidget {
-  const Speech({
+class SpeechTextField extends StatelessWidget {
+  const SpeechTextField({
     super.key,
     required SpeechToText speechToText,
     required String input,
@@ -31,7 +31,7 @@ class Speech extends StatelessWidget {
                 // recognition is not yet ready or not supported on
                 // the target device
                 : _speechEnabled
-                    ? _input
+                    ? _input != "" ? _input: "No recognized words"
                     : 'Speech not available',
           ),
       ),

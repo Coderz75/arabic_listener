@@ -1,10 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import '../classes/WordDefCard.dart';
-import '../services/speech.dart';
+import 'SpeechTextField.dart';
 import '../services/translate.dart';
 
 
@@ -92,6 +94,9 @@ class _HomePageState extends State<HomePage> {
         WordDefCard(word: word, def: def, root: root),
       );
     }
+    //double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Arabic Listener'),
@@ -122,21 +127,38 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-                inputType == 0 ? Speech(speechToText: _speechToText, input: _input, speechEnabled: _speechEnabled) : 
-                TextField(
-                  decoration:const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter a search term',
-                  ),
-                  onChanged: (text) async {
-                    setState(() {
+                inputType == 0 ? 
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: screenWidth * 0.2,
+                          child: FloatingActionButton(
+                            onPressed:
+                                // If not yet listening for speech start, otherwise stop
+                                _speechToText.isNotListening ? _startListening : _stopListening,
+                            tooltip: 'Listen',
+                            child: inputType == 0 ? Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic) : const Placeholder(),
+                          ),
+                        ),
+                        const Spacer(),
+                        SpeechTextField(speechToText: _speechToText, input: _input, speechEnabled: _speechEnabled),
+                      ],
+                    )
+                  : 
+                  TextField(
+                    decoration:const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter a search term',
+                    ),
+                    onChanged: (text) async {
                       setState(() {
-                        _input = text;
-                        wordData = translator.translate(_input);
+                        setState(() {
+                          _input = text;
+                          wordData = translator.translate(_input);
+                        });
                       });
-                    });
-                  },
-                ),
+                    },
+                  ),
             
               ],
             ),
@@ -150,13 +172,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed:
-            // If not yet listening for speech start, otherwise stop
-            _speechToText.isNotListening ? _startListening : _stopListening,
-        tooltip: 'Listen',
-        child: inputType == 0 ? Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic) : const Placeholder(),
-      ) ,
     );
   }
 }
