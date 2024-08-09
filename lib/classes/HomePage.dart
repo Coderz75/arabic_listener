@@ -6,7 +6,7 @@ import 'package:toggle_switch/toggle_switch.dart';
 import '../classes/WordDefCard.dart';
 import 'SpeechTextField.dart';
 import '../services/translate.dart';
-
+import '../services/bg.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -14,10 +14,10 @@ class HomePage extends StatefulWidget {
   });
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePage> createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> {
   final SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
   String _input = '';
@@ -25,6 +25,11 @@ class _HomePageState extends State<HomePage> {
   Translator translator = Translator();
   int inputType = 0;
   
+  void reload(){
+    setState(() {
+      
+    });
+  }
 
   @override
   void initState() {
@@ -77,20 +82,60 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     List<Widget> wordDef = [];
     for(int i = 0; i < wordData.length; i++) {
-      var word = wordData[i][0];
-      var def = wordData[i][1];
+      var picked = wordData[i];
+      var isAmbiguous= false;
+      if(picked[0] is List){
+        if(BgScripts.picked[i] == null){
+          print(wordData[i].length);
+          List<Widget> things = [];
+          for(int i2 = 0; i2 < picked.length; i2++){
+            var z = picked[i2];
+            things.add(
+              OutlinedButton(
+                onPressed:() => {
+                  BgScripts.picker(i,i2),
+                  setState(() { })
+                }, 
+                child: Column(
+                  children: [
+                    Text(z[4]),
+                  ],
+                ),
+              )
+            );
+          }
+          wordDef.add(
+            Card(
+              child:Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: things,
+                  )
+                            ),
+              )
+          )
+          );
+          continue;
+        }else{
+          picked = picked[BgScripts.picked[i]];
+          isAmbiguous = true;
+        }
+      }
+      var word = picked[0];
+      var def = picked[1];
       var root = "";
-      if(wordData[i].length == 3){
-        root = wordData[i][2];
+      if(picked.length == 3){
+        root = picked[2];
       }
       wordDef.add(
-        WordDefCard(word: word, def: def, root: root),
+        WordDefCard(word: word, def: def, root: root, isAmbigous: isAmbiguous, index: i, home: this),
       );
+      
     }
     //double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
@@ -170,6 +215,44 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class WordChooser extends StatelessWidget {
+  const WordChooser({
+    super.key,
+    required this.words,
+    required this.index
+  });
+  final List words;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> things = [];
+    for(int i = 0; i < words.length; i++){
+      var z = words[i];
+      things.add(
+        OutlinedButton(
+          onPressed:() => {
+            BgScripts.picker(index,i),
+          }, 
+          child: Column(
+            children: [
+              Text(z[4]),
+            ],
+          ),
+        )
+      );
+    }
+    return Card(
+      child:Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: things,
+        )
+    )
     );
   }
 }

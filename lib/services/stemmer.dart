@@ -32,8 +32,8 @@ class Stemmer{
     //Remove prefixes and suffixes
     if (word.length >= 6) { word = removeAll( word, RegExp(r'^(كال|بال|ولل|وال)(.*)', unicode: true),[2]); }
     if (word.length >= 5) { word = removeAll(word, RegExp(r'^(ال|لل)(.*)', unicode: true),[2]); }
-    if (word.length >= 6) { word = removeAll(word, RegExp(r'^(.*)(تما|هما|تان|تين|كما)', unicode: true),[1]); }
-    if (word.length >= 5) { word = removeAll(word, RegExp(r'^(.*)(ون|ات|ان|ين|تن|كم|هن|نا|يا|ها|تم|كن|ني|وا|ما|هم)', unicode: true),[1]); }
+    if (word.length >= 6) { word = removeAll(word, RegExp(r'^(.*)(كما|تان|هما|تين|تما)', unicode: true),[1]); }
+    if (word.length >= 5) { word = removeAll(word, RegExp(r'^(.*)(ون|ان|ين|تن|كم|هن|نا|تم|ات|يا|كن|ني|ما|ها|وا|هم)', unicode: true),[1]); }
     
     // Remove initial waw (if found)
     if (word.length >= 4) { word = removeAll(word, RegExp(r'^وو', unicode: true),[]); }

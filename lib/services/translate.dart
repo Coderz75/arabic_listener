@@ -24,17 +24,20 @@ class Translator{
       var found = false;
       for(var v in data.values) {
         if(v["word"] == word){
-          matches.add([v["word"],v["definition"]]);
+          matches.add([v["word"],v["definition"],""]);
           found = true;
         }
       }
 
       String search = Stemmer.wordStemmer(word);
-      for(var v in data.values) {
-        if(v["word"] == search){
-          matches.add([word,v["definition"], search]);
-          found = true;
+      if(search != word){
+        for(var v in data.values) {
+          if(v["word"] == search){
+            List input = [word,v["definition"], search];
+            matches.add(input);
+            found = true;
 
+          }
         }
       }
       if(!found){
@@ -43,12 +46,14 @@ class Translator{
         if(matches.length == 1){
           wordData.add(matches[0]);
         }else{
-          wordData.add([word,"Multiple matches found"]);
-          for(var i in matches){
-            print(i[1]);
-            print(getMasdr(i[1]));
-            print(getHarakat(word, getMasdr(i[1])));
+          for(int i = 0; i < matches.length; i++){
+            var z = matches[i];
+            var masdr = getMasdr(z[1]);
+            var wordHarakat = getHarakat(word, masdr);
+            matches[i].add(masdr);
+            matches[i].add(wordHarakat);
           }
+          wordData.add(matches);
         }
       }
     }
