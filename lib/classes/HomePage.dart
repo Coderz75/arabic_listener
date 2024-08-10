@@ -7,6 +7,7 @@ import '../classes/WordDefCard.dart';
 import 'SpeechTextField.dart';
 import '../services/translate.dart';
 import '../services/bg.dart';
+import '../classes/WordChooser.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -90,35 +91,8 @@ class HomePageState extends State<HomePage> {
       var isAmbiguous= false;
       if(picked[0] is List){
         if(BgScripts.picked[i] == null){
-          print(wordData[i].length);
-          List<Widget> things = [];
-          for(int i2 = 0; i2 < picked.length; i2++){
-            var z = picked[i2];
-            things.add(
-              OutlinedButton(
-                onPressed:() => {
-                  BgScripts.picker(i,i2),
-                  setState(() { })
-                }, 
-                child: Column(
-                  children: [
-                    Text(z[4]),
-                  ],
-                ),
-              )
-            );
-          }
           wordDef.add(
-            Card(
-              child:Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: things,
-                  )
-                            ),
-              )
-          )
+            WordChooser(words: picked, index: i, home: this)
           );
           continue;
         }else{
@@ -215,44 +189,6 @@ class HomePageState extends State<HomePage> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class WordChooser extends StatelessWidget {
-  const WordChooser({
-    super.key,
-    required this.words,
-    required this.index
-  });
-  final List words;
-  final int index;
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> things = [];
-    for(int i = 0; i < words.length; i++){
-      var z = words[i];
-      things.add(
-        OutlinedButton(
-          onPressed:() => {
-            BgScripts.picker(index,i),
-          }, 
-          child: Column(
-            children: [
-              Text(z[4]),
-            ],
-          ),
-        )
-      );
-    }
-    return Card(
-      child:Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: things,
-        )
-    )
     );
   }
 }
