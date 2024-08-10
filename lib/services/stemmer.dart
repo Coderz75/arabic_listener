@@ -30,7 +30,7 @@ class Stemmer{
     //Remove diacritics
     word = removeAllHarakat(word);
     //Remove prefixes and suffixes
-    if (word.length >= 6) { word = removeAll( word, RegExp(r'^(كال|بال|ولل|وال)(.*)', unicode: true),[2]); }
+    //if (word.length >= 6) { word = removeAll( word, RegExp(r'^(كال|بال|ولل|وال)(.*)', unicode: true),[2]); }
     if (word.length >= 5) { word = removeAll(word, RegExp(r'^(ال|لل)(.*)', unicode: true),[2]); }
     if (word.length >= 6) { word = removeAll(word, RegExp(r'^(.*)(كما|تان|هما|تين|تما)', unicode: true),[1]); }
     if (word.length >= 5) { word = removeAll(word, RegExp(r'^(.*)(ون|ان|ين|تن|كم|هن|نا|تم|ات|يا|كن|ني|ما|ها|وا|هم)', unicode: true),[1]); }
@@ -97,4 +97,38 @@ class Stemmer{
     }
     return word;
   }
+
+  Map<String,dynamic> data = {
+
+
+    "Specifity": {
+      "matches": [2],
+      "regex": "^(&)(.*)",
+      "length": 5,
+      "items": {
+        "ال": "The",
+        "لل": "For the",
+      }
+    },
+    "Suffixes1": { //كما|تان|هما|تين|تما)
+      "matches": [1],
+      "regex": "^(.*)(&)",
+      "length": 6,
+      "items": {
+        "تان": "Dual, Feminine",
+        "هما": "Dual",
+        "تين": "Plural, Feminine",
+        "تما": "Dual"
+      }
+    },
+    "Suffixes2": { //ون|ان|ين|تن|كم|هن|نا|تم|ات|يا|كن|ني|ما|ها|وا|هم)
+      "matches": [1],
+      "regex": "^(.*)(&)",
+      "length": 5,
+      "items": {
+        "ون": "Pluran"
+
+      }
+    }
+  };
 }

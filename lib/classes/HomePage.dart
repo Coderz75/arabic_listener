@@ -127,7 +127,9 @@ class HomePageState extends State<HomePage> {
                 ToggleSwitch(
                   initialLabelIndex: 0,
                   totalSwitches: 2,
-                  labels: const ['Speech', 'Text'],
+                  activeBgColor: const [Colors.black], 
+                  inactiveBgColor: Colors.grey[850],
+                  labels: const ['Text', 'Speech'],
                   onToggle: (index) async {
                     setState(() {
                       inputType = index as int;
@@ -139,13 +141,12 @@ class HomePageState extends State<HomePage> {
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     child: Text(
-                      inputType == 0 ? 'Recognized words:': "Type here:",
+                      inputType == 1 ? 'Recognized words:': "Type here:",
                       style: const TextStyle(fontSize: 30.0),
                     ),
                   ),
                 ),
-                inputType == 0 ? 
-                    Row(
+                if (inputType == 1) Row(
                       children: [
                         SizedBox(
                           width: screenWidth * 0.2,
@@ -154,15 +155,13 @@ class HomePageState extends State<HomePage> {
                                 // If not yet listening for speech start, otherwise stop
                                 _speechToText.isNotListening ? _startListening : _stopListening,
                             tooltip: 'Listen',
-                            child: inputType == 0 ? Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic) : const Placeholder(),
+                            child: inputType == 1 ? Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic) : const Placeholder(),
                           ),
                         ),
                         const Spacer(),
                         SpeechTextField(speechToText: _speechToText, input: _input, speechEnabled: _speechEnabled),
                       ],
-                    )
-                  : 
-                  TextField(
+                    ) else TextField(
                     decoration:const InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: 'Enter a search term',
@@ -176,6 +175,13 @@ class HomePageState extends State<HomePage> {
                       });
                     },
                   ),
+                  if(inputType == 1) const Text(
+                    "WARNING: SPEECH PERFORMANCE MAY VARY",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    )
+                  )
             
               ],
             ),
