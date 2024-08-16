@@ -26,6 +26,42 @@ class Stemmer{
     return word;
   }
 
+  static List<dynamic> prefixes(String word){
+    List<dynamic> result = [];
+    String reg = data["prefixes"]["regex"];
+    for (MapEntry<String, String> item in data["prefixes"]["items"].entries) {
+      if(word.length < data["prefixes"]["length"]){
+        break;
+      }
+      String z = reg.replaceAll(RegExp(r'&'), item.key);
+      String x = removeAll(word, RegExp(z, unicode: true),data["prefixes"]["matches"]);
+      if(x != word){
+        result.add([item.key, item.value]);
+        word = x;
+      }
+    }
+    result.add(word);
+    return result;
+  }
+
+  static List<dynamic> suffixes(String word){
+    List<dynamic> result = [];
+    String reg = data["suffixes"]["regex"];
+    for (MapEntry<String, String> item in data["suffixes"]["items"].entries) {
+      if(word.length < data["suffixes"]["length"]){
+        break;
+      }
+      String z = reg.replaceAll(RegExp(r'&'), item.key);
+      String x = removeAll(word, RegExp(z, unicode: true),data["suffixes"]["matches"]);
+      if(x != word){
+        result.add([item.key, item.value]);
+        word = x;
+      }
+    }
+    result.add(word);
+    return result;
+  }
+
   static String wordStemmer(var word){
     //Remove diacritics
     word = removeAllHarakat(word);
@@ -53,7 +89,7 @@ class Stemmer{
       word = removeAll( word, RegExp(r'^(..)ا(..)', unicode: true),[1,2]); // فعالل
       word = removeAll( word, RegExp(r'^ا(...)ا(.)', unicode: true),[1,2]); // افعلال
       word = removeAll( word, RegExp(r'^مت(...)', unicode: true),[1]); // متفعلل
-      word = removeAll( word, RegExp(r'^[لبفسويتنامك]', unicode: true),[]);
+      //word = removeAll( word, RegExp(r'^[لبفسويتنامك]', unicode: true),[]);
       if(word.length == 6){
         word = removeAll( word, RegExp(r'^(..)ا(.)ي(.)', unicode: true),[1,2,3]);// فعاليل
       }
@@ -80,7 +116,7 @@ class Stemmer{
       word = removeAll( word, RegExp(r'[ةهيكتان]', unicode: true),[]);
       word = removeAll( word, RegExp(r'^(..)ا(..)', unicode: true),[1,2]);        //  فعالل
       word = removeAll( word, RegExp(r'^ا(...)ا(.)', unicode: true),[1,2]);       // فعلال
-      word = removeAll( word, RegExp(r'^[لبفسويتنامك]', unicode: true),[]);
+      //word = removeAll( word, RegExp(r'^[لبفسويتنامك]', unicode: true),[]);
     }
 
     if(word.length == 4){
@@ -92,14 +128,38 @@ class Stemmer{
 
       word = removeAll( word, RegExp(r'^(.)(.)(.)[ةهيكتان]', unicode: true),[1,2,3]);     // single letter suffixes
       if (word.length == 3 ) { return word; }
-      word = removeAll( word, RegExp(r'^[لبفسويتناك](.)(.)(.)', unicode: true),[1,2,3]);     // single letter prefixes
+      //word = removeAll( word, RegExp(r'^[لبفسويتناك](.)(.)(.)', unicode: true),[1,2,3]);     // single letter prefixes
     }
     return word;
   }
 
-  Map<String,dynamic> data = {
-
-
+  static Map<String,dynamic> data = {
+    "prefixes":{
+      "regex": "^(&)(.*)",
+      "matches": [2],
+      "length": 4,
+      "items": {
+        "ب": "with",
+        "و": "oath",
+        "ال": "The",
+        "لل": "For the",
+        "ل": "For",
+        "ف": "in/on",
+      }
+    },
+    "suffixes":{ //كما|تان|هما|تين|تما)
+      "regex": "^(.*)(&)",
+      "matches": [1],
+      "length": 6,
+      "items": {
+        "كما": "You (dual)",
+        "تان": "Dual (feminine)",
+        "هما": "They (dual)",
+        "تين": "They (dual)",
+        "تما": "You (dual)",
+      }
+    }
+    /*
     "Specifity": {
       "matches": [2],
       "regex": "^(&)(.*)",
@@ -148,6 +208,6 @@ class Stemmer{
       "items":{
         "^[ام]ست(...)": "",
       }
-    },
+    },*/
   };
 }

@@ -30,6 +30,10 @@ class Translator{
       }
 
       String search = Stemmer.wordStemmer(word);
+      List thing = Stemmer.prefixes(word);
+      print(thing);
+      List other = Stemmer.suffixes(word);
+      print(other);
       if(search != word){
         for(var v in data.values) {
           if(v["word"] == search){
