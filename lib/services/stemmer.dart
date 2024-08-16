@@ -31,7 +31,7 @@ class Stemmer{
     word = removeAllHarakat(word);
     //Remove prefixes and suffixes
     //if (word.length >= 6) { word = removeAll( word, RegExp(r'^(كال|بال|ولل|وال)(.*)', unicode: true),[2]); }
-    if (word.length >= 5) { word = removeAll(word, RegExp(r'^(ال|لل)(.*)', unicode: true),[2]); }
+    if (word.length >= 5) { word = removeAll(word, RegExp(r'^(ال|لل|بال|فال)(.*)', unicode: true),[2]); }
     if (word.length >= 6) { word = removeAll(word, RegExp(r'^(.*)(كما|تان|هما|تين|تما)', unicode: true),[1]); }
     if (word.length >= 5) { word = removeAll(word, RegExp(r'^(.*)(ون|ان|ين|تن|كم|هن|نا|تم|ات|يا|كن|ني|ما|ها|وا|هم)', unicode: true),[1]); }
     
@@ -43,17 +43,16 @@ class Stemmer{
     //Process advanced patterns (4 letter roots)
     if(word.length == 6){
       word = removeAll( word, RegExp(r'^[ام]ست(...)', unicode: true),[1]);//  استفعل 
-      word = removeAll( word, RegExp(r'^[ام]ست(...)', unicode: true),[1]);// استفعل
       word = removeAll( word, RegExp(r'^[تم](.)ا(.)ي(.)', unicode: true),[1,2,3]); // تفاعيل - مفاعيل
       word = removeAll( word, RegExp(r'^م(..)ا(.)ة', unicode: true),[1,2]);// مفعالة
       word = removeAll( word, RegExp(r'^ا(.)[تط](.)ا(.)', unicode: true),[1,2,3]);// افتعال 
       word = removeAll( word, RegExp(r'^ا(.)[تط](.)ا(.)', unicode: true),[1,2,3]);// افعوعل
-      if(word.lenth == 3) return word;
+      if(word.length == 3) return word;
 
       word = removeAll( word, RegExp(r'[ةهيكتان]', unicode: true),[]);
       word = removeAll( word, RegExp(r'^(..)ا(..)', unicode: true),[1,2]); // فعالل
       word = removeAll( word, RegExp(r'^ا(...)ا(.)', unicode: true),[1,2]); // افعلال
-      word = removeAll( word, RegExp(r'^مت(.۔..)', unicode: true),[1]); // متفعلل
+      word = removeAll( word, RegExp(r'^مت(...)', unicode: true),[1]); // متفعلل
       word = removeAll( word, RegExp(r'^[لبفسويتنامك]', unicode: true),[]);
       if(word.length == 6){
         word = removeAll( word, RegExp(r'^(..)ا(.)ي(.)', unicode: true),[1,2,3]);// فعاليل
@@ -126,9 +125,29 @@ class Stemmer{
       "regex": "^(.*)(&)",
       "length": 5,
       "items": {
-        "ون": "Pluran"
-
+        "ون": "Pluran",
+        "ان": "Dual",
+        "ين": "Plural",
+        "تن": "Plural (feminine)",
+        "كم": "You all",
+        "هن": "idk",
+        "نا": "We",
+        "تم": "You (feminine)",
+        "ات": "idk",
+        "يا": "idk",
+        "كن": "idk",
+        "ني": "Me",
+        "ما": "idk",
+        "ها": "idk",
+        "وا": "idk",
+        "هم": "Their",
+      },
+    },
+    "Forms1":{
+      "length": 6,
+      "items":{
+        "^[ام]ست(...)": "",
       }
-    }
+    },
   };
 }

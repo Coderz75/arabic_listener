@@ -35,8 +35,8 @@ class WordChooser extends StatelessWidget {
       Card(
         child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Wrap(
+              alignment: WrapAlignment.center,
               children: things,
             )
           ),
