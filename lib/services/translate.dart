@@ -4,6 +4,7 @@ import 'dart:convert';
 
 class Translator{
   Map<String,dynamic> data ={};
+
   Translator(){
     init();
   }
@@ -15,49 +16,79 @@ class Translator{
     String thing = x.split(" ")[1];
     return thing;
   }
+  List _possibilityScanner(List thing, List possibilities){
+    if(thing.length != 1){
+      possibilities.add(thing[thing.length - 1]);
+      for(int i = 0; i < thing.length-1; i++){
+        String newWord = thing[i][2];
+        if(!possibilities.contains(newWord)){
+          possibilities.add(newWord);
+        }
+      }
+    }
+    return possibilities;
+  }
+  List getAllPossibilities(String word){
+    List possibilities = [];
+    
+    List thing = Stemmer.prefixes(word);
+    possibilities = _possibilityScanner(thing,possibilities);
+    thing = Stemmer.suffixes(word);
+    possibilities = _possibilityScanner(thing,possibilities);
+
+    for(int i = 0; i < possibilities.length; i++){
+      List thingy = getAllPossibilities(possibilities[i]);
+      for(int x = 0; x < thingy.length; x++){
+        if(!possibilities.contains(thingy[x])){
+          possibilities.add(thingy[x]);
+        }
+      }
+    }
+    possibilities.add(word);
+    possibilities.add(Stemmer.wordStemmer(word));
+    return possibilities;
+  }
   List translate(String input){
     List wordData =[];
     for(int i = 0; i < input.split(' ').length; i++) {
       String word = input.split(' ')[i];
-      List matches =[];
-      //If the word is noun/exists
-      var found = false;
-      for(var v in data.values) {
-        if(v["word"] == word){
-          matches.add([v["word"],v["definition"],""]);
-          found = true;
-        }
-      }
+      if(word.isNotEmpty){
+        List searches = getAllPossibilities(word);
+        List matches =[];
+        Map<String, List> matchData = {
+          word: [],
+          searches[1]: [],
+        };
+        
+        // 0 = Ambiguous, 1 = ism, 2 = fel, 3 = harf 
+        int wordType = 0;
 
-      String search = Stemmer.wordStemmer(word);
-      List thing = Stemmer.prefixes(word);
-      print(thing);
-      List other = Stemmer.suffixes(word);
-      print(other);
-      if(search != word){
+        //advanced:
+        
+
+        var found = false;
         for(var v in data.values) {
-          if(v["word"] == search){
-            List input = [word,v["definition"], search];
-            matches.add(input);
+          if(searches.contains(v["word"])){
+            matches.add([v["word"],v["definition"],""]);
             found = true;
-
           }
         }
-      }
-      if(!found){
-        wordData.add([word, "No data", search]);
-      }else{
-        if(matches.length == 1){
-          wordData.add(matches[0]);
+        
+        if(!found){
+          wordData.add([word, "No data", ""]);
         }else{
-          for(int i = 0; i < matches.length; i++){
-            var z = matches[i];
-            var masdr = getMasdr(z[1]);
-            var wordHarakat = getHarakat(word, masdr);
-            matches[i].add(masdr);
-            matches[i].add(wordHarakat);
+          if(matches.length == 1){
+            wordData.add(matches[0]);
+          }else{
+            for(int i = 0; i < matches.length; i++){
+              var z = matches[i];
+              var masdr = getMasdr(z[1]);
+              var wordHarakat = getHarakat(word, masdr);
+              matches[i].add(masdr);
+              matches[i].add(wordHarakat);
+            }
+            wordData.add(matches);
           }
-          wordData.add(matches);
         }
       }
     }

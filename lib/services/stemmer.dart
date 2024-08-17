@@ -26,17 +26,16 @@ class Stemmer{
     return word;
   }
 
-  static List<dynamic> prefixes(String word){
+  static List<dynamic> _stemming(String reg, Map<String,dynamic> xdata, String word){
     List<dynamic> result = [];
-    String reg = data["prefixes"]["regex"];
-    for (MapEntry<String, String> item in data["prefixes"]["items"].entries) {
-      if(word.length < data["prefixes"]["length"]){
+    for (MapEntry<String, String> item in xdata["items"].entries) {
+      if(word.length < xdata["length"]){
         break;
       }
       String z = reg.replaceAll(RegExp(r'&'), item.key);
-      String x = removeAll(word, RegExp(z, unicode: true),data["prefixes"]["matches"]);
+      String x = removeAll(word, RegExp(z, unicode: true),xdata["matches"]);
       if(x != word){
-        result.add([item.key, item.value]);
+        result.add([item.key, item.value, x]);
         word = x;
       }
     }
@@ -44,22 +43,13 @@ class Stemmer{
     return result;
   }
 
+  static List<dynamic> prefixes(String word){
+    return _stemming(data["prefixes"]["regex"], data["prefixes"], word);
+  }
+
   static List<dynamic> suffixes(String word){
-    List<dynamic> result = [];
-    String reg = data["suffixes"]["regex"];
-    for (MapEntry<String, String> item in data["suffixes"]["items"].entries) {
-      if(word.length < data["suffixes"]["length"]){
-        break;
-      }
-      String z = reg.replaceAll(RegExp(r'&'), item.key);
-      String x = removeAll(word, RegExp(z, unicode: true),data["suffixes"]["matches"]);
-      if(x != word){
-        result.add([item.key, item.value]);
-        word = x;
-      }
-    }
-    result.add(word);
-    return result;
+    return _stemming(data["suffixes"]["regex"], data["suffixes"], word) + 
+          _stemming(data["suffixes2"]["regex"], data["suffixes2"], word);
   }
 
   static String wordStemmer(var word){
@@ -134,7 +124,7 @@ class Stemmer{
   }
 
   static Map<String,dynamic> data = {
-    "prefixes":{
+    "prefixes":{ // Nouns only
       "regex": "^(&)(.*)",
       "matches": [2],
       "length": 4,
@@ -147,7 +137,7 @@ class Stemmer{
         "ف": "in/on",
       }
     },
-    "suffixes":{ //كما|تان|هما|تين|تما)
+    "suffixes":{
       "regex": "^(.*)(&)",
       "matches": [1],
       "length": 6,
@@ -158,7 +148,30 @@ class Stemmer{
         "تين": "They (dual)",
         "تما": "You (dual)",
       }
-    }
+    },
+    "suffixes2":{ // (ون|ان|ين|تن|كم|هن|نا|تم|ات|يا|كن|ني|ما|ها|وا|هم)
+        "regex": "^(.*)(&)",
+        "matches": [1],
+        "length": 5,
+        "items": {
+          "ون": "Masculine plural",
+          "ان": "Masculine Dual",
+          "ين": "Masculine plural",
+          "تن": "idk",
+          "كم": ["Your (posession)", "You (object)"],
+          "هن": ["Their (posession)", "They (subject)"],
+          "نا": ["Our (posession)", "We (subject)"],
+          "تم": "You (subject)",
+          "ات": "Feminine plural",
+          //"يا": "Masculine Dual",
+          "كن": ["Your (posession)", "You (object)"],
+          "ني": "Me (object)",
+          //"ما": ["Your (posession)", "You (object)"],
+          "ها": ["Hers (posession)", "Her (object)"],
+          "وا": "They (past tense; subject)",
+          "هم": ["Their (posession)", "Them (object)"],
+        }
+    },
     /*
     "Specifity": {
       "matches": [2],
