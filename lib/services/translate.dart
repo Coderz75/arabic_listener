@@ -20,9 +20,11 @@ class Translator{
     if(thing.length != 1){
       possibilities.add(thing[thing.length - 1]);
       for(int i = 0; i < thing.length-1; i++){
-        String newWord = thing[i][2];
-        if(!possibilities.contains(newWord)){
-          possibilities.add(newWord);
+        if(thing[i].length >= 3){
+          String newWord = thing[i][2];
+          if(!possibilities.contains(newWord)){
+            possibilities.add(newWord);
+          }
         }
       }
     }
@@ -59,7 +61,7 @@ class Translator{
           word: [],
           searches[1]: [],
         };
-        
+        print(searches);
         // 0 = Ambiguous, 1 = ism, 2 = fel, 3 = harf 
         int wordType = 0;
 

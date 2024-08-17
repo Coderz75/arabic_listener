@@ -28,7 +28,7 @@ class Stemmer{
 
   static List<dynamic> _stemming(String reg, Map<String,dynamic> xdata, String word){
     List<dynamic> result = [];
-    for (MapEntry<String, String> item in xdata["items"].entries) {
+    for (MapEntry<String, dynamic> item in xdata["items"].entries) {
       if(word.length < xdata["length"]){
         break;
       }
@@ -48,8 +48,14 @@ class Stemmer{
   }
 
   static List<dynamic> suffixes(String word){
-    return _stemming(data["suffixes"]["regex"], data["suffixes"], word) + 
-          _stemming(data["suffixes2"]["regex"], data["suffixes2"], word);
+    List thing1 = _stemming(data["suffixes"]["regex"], data["suffixes"], word);
+    List thing2 = _stemming(data["suffixes2"]["regex"], data["suffixes2"], word);
+    for(dynamic x in thing2){
+      if(!thing1.contains(x)){
+        thing1.add(x);
+      }
+    }
+    return thing1;
   }
 
   static String wordStemmer(var word){
