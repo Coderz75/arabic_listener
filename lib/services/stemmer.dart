@@ -85,7 +85,7 @@ class Stemmer{
       word = removeAll( word, RegExp(r'^(..)ا(..)', unicode: true),[1,2]); // فعالل
       word = removeAll( word, RegExp(r'^ا(...)ا(.)', unicode: true),[1,2]); // افعلال
       word = removeAll( word, RegExp(r'^مت(...)', unicode: true),[1]); // متفعلل
-      //word = removeAll( word, RegExp(r'^[لبفسويتنامك]', unicode: true),[]);
+      word = removeAll( word, RegExp(r'^[لبفسويتنامك]', unicode: true),[]);
       if(word.length == 6){
         word = removeAll( word, RegExp(r'^(..)ا(.)ي(.)', unicode: true),[1,2,3]);// فعاليل
       }
@@ -112,7 +112,7 @@ class Stemmer{
       word = removeAll( word, RegExp(r'[ةهيكتان]', unicode: true),[]);
       word = removeAll( word, RegExp(r'^(..)ا(..)', unicode: true),[1,2]);        //  فعالل
       word = removeAll( word, RegExp(r'^ا(...)ا(.)', unicode: true),[1,2]);       // فعلال
-      //word = removeAll( word, RegExp(r'^[لبفسويتنامك]', unicode: true),[]);
+      word = removeAll( word, RegExp(r'^[لبفسويتنامك]', unicode: true),[]);
     }
 
     if(word.length == 4){
@@ -124,7 +124,7 @@ class Stemmer{
 
       word = removeAll( word, RegExp(r'^(.)(.)(.)[ةهيكتان]', unicode: true),[1,2,3]);     // single letter suffixes
       if (word.length == 3 ) { return word; }
-      //word = removeAll( word, RegExp(r'^[لبفسويتناك](.)(.)(.)', unicode: true),[1,2,3]);     // single letter prefixes
+      word = removeAll( word, RegExp(r'^[لبفسويتناك](.)(.)(.)', unicode: true),[1,2,3]);     // single letter prefixes
     }
     return word;
   }

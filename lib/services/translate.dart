@@ -107,52 +107,54 @@ class Translator{
       if(cursorL >= word.length){
         break;
       }
-      List expected = transliteration[word[cursorL]] as List;
-      if(expected.contains(masdr[i])){
-        finalWord += word[cursorL];
-        cursorL++;
-      }else{
-        if(masdr[i] == "a"){
-          if(i < masdr.length - 1 && 
-             masdr[i + 1] == "n" &&
-             (cursorL == word.length -1 || 
-              (cursorL < word.length -1 && 
-               word[cursorL + 1] != "ن"
+      if(transliteration[word[cursorL]] != null){ 
+        List expected = transliteration[word[cursorL]] as List;
+        if(expected.contains(masdr[i])){
+          finalWord += word[cursorL];
+          cursorL++;
+        }else{
+          if(masdr[i] == "a"){
+            if(i < masdr.length - 1 && 
+              masdr[i + 1] == "n" &&
+              (cursorL == word.length -1 || 
+                (cursorL < word.length -1 && 
+                word[cursorL + 1] != "ن"
+                )
               )
-             )
-            ){
-              finalWord += "ً";
-          }else{
-            finalWord += "َ";
-          }
+              ){
+                finalWord += "ً";
+            }else{
+              finalWord += "َ";
+            }
 
-        }
-        else if(masdr[i] == "i"){
-          if(i < masdr.length - 1 && 
-             masdr[i + 1] == "n" &&
-             (cursorL == word.length -1 || 
-              (cursorL < word.length -1 && 
-               word[cursorL + 1] != "ن"
-              )
-             )
-            ){
-              finalWord += "ٍ";
-          }else{
-            finalWord += "ِ";
           }
-        }
-        else if(masdr[i] == "u"){
-          if(i < masdr.length - 1 && 
-             masdr[i + 1] == "n" &&
-             (cursorL == word.length -1 || 
-              (cursorL < word.length -1 && 
-               word[cursorL + 1] != "ن"
+          else if(masdr[i] == "i"){
+            if(i < masdr.length - 1 && 
+              masdr[i + 1] == "n" &&
+              (cursorL == word.length -1 || 
+                (cursorL < word.length -1 && 
+                word[cursorL + 1] != "ن"
+                )
               )
-             )
-            ){
-              finalWord += "ٌ";
-          }else{
-            finalWord += "ُ";
+              ){
+                finalWord += "ٍ";
+            }else{
+              finalWord += "ِ";
+            }
+          }
+          else if(masdr[i] == "u"){
+            if(i < masdr.length - 1 && 
+              masdr[i + 1] == "n" &&
+              (cursorL == word.length -1 || 
+                (cursorL < word.length -1 && 
+                word[cursorL + 1] != "ن"
+                )
+              )
+              ){
+                finalWord += "ٌ";
+            }else{
+              finalWord += "ُ";
+            }
           }
         }
       }
