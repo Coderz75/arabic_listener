@@ -1,10 +1,11 @@
+import 'package:arabic_listener/services/bg.dart';
+
 import 'stemmer.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 
 class Translator{
   Map<String,dynamic> data ={};
-
   Translator(){
     init();
   }
@@ -16,22 +17,28 @@ class Translator{
     String thing = x.split(" ")[1];
     return thing;
   }
-  List _possibilityScanner(List thing, List possibilities){
+  List<List> _possibilityScanner(List thing, List<List> possibilities){
     if(thing.length != 1){
-      possibilities.add(thing[thing.length - 1]);
+      if(!BgScripts.listContains(possibilities,thing)){
+        possibilities.add(thing);
+      }
+      List<List> other = [];
       for(int i = 0; i < thing.length-1; i++){
-        if(thing[i].length >= 3){
-          String newWord = thing[i][2];
-          if(!possibilities.contains(newWord)){
-            possibilities.add(newWord);
-          }
+        other.add(thing[i]);
+        List thingity = [];
+        for(int j = 0; j < other.length; j++){
+          thingity.add(other[j]);
+        }
+        thingity.add(thing[i][thing[i].length-1]);
+        if(!BgScripts.listContains(possibilities,thingity)){
+          possibilities.add(thingity);
         }
       }
     }
     return possibilities;
   }
   List getAllPossibilities(String word){
-    List possibilities = [];
+    List<List> possibilities = [];
     
     List thing = Stemmer.prefixes(word);
     possibilities = _possibilityScanner(thing,possibilities);
@@ -39,15 +46,20 @@ class Translator{
     possibilities = _possibilityScanner(thing,possibilities);
 
     for(int i = 0; i < possibilities.length; i++){
-      List thingy = getAllPossibilities(possibilities[i]);
+      List thingy = getAllPossibilities(possibilities[i][possibilities[i].length - 1]);
       for(int x = 0; x < thingy.length; x++){
-        if(!possibilities.contains(thingy[x])){
+        if(!BgScripts.listContains(possibilities,thingy[x])){
           possibilities.add(thingy[x]);
         }
       }
     }
-    possibilities.add(word);
-    possibilities.add(Stemmer.wordStemmer(word));
+    if(!BgScripts.listContains(possibilities,[word])){
+      possibilities.add([word]);
+    }
+    String hyperStemmed = Stemmer.wordStemmer(word);
+    if(!BgScripts.listContains(possibilities,[hyperStemmed])){
+      possibilities.add([hyperStemmed]);
+    }
     return possibilities;
   }
   List translate(String input){
@@ -55,13 +67,17 @@ class Translator{
     for(int i = 0; i < input.split(' ').length; i++) {
       String word = input.split(' ')[i];
       if(word.isNotEmpty){
-        List searches = getAllPossibilities(word);
+        List searches = [];
+
+        List zz = getAllPossibilities(word);
+        for(int j = 0; j < zz.length; j++){
+          searches.add(zz[j][zz[j].length-1]);
+        }
         List matches =[];
-        Map<String, List> matchData = {
-          word: [],
-          searches[1]: [],
-        };
+        
+        print(zz);
         print(searches);
+
         // 0 = Ambiguous, 1 = ism, 2 = fel, 3 = harf 
         int wordType = 0;
 
