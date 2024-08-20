@@ -20,7 +20,18 @@ class Translator{
   List<List> _possibilityScanner(List thing, List<List> possibilities){
     if(thing.length != 1){
       if(!BgScripts.listContains(possibilities,thing)){
-        possibilities.add(thing);
+        String wordy = thing[thing.length-1];
+        bool inList = false;
+        for(int j = 0; j < possibilities.length; j++){
+          if(possibilities[j][possibilities[j].length-1] == wordy){
+            inList = true;
+            break;
+          }
+        }
+        if(!inList){
+          possibilities.add(thing);
+        }
+        
       }
       List<List> other = [];
       for(int i = 0; i < thing.length-1; i++){
@@ -31,13 +42,24 @@ class Translator{
         }
         thingity.add(thing[i][thing[i].length-1]);
         if(!BgScripts.listContains(possibilities,thingity)){
-          possibilities.add(thingity);
+          String wordy = thingity[thingity.length-1];
+          bool inList = false;
+          for(int j = 0; j < possibilities.length; j++){
+            if(possibilities[j][possibilities[j].length-1] == wordy){
+              inList = true;
+              break;
+            }
+          }
+          if(!inList){
+            possibilities.add(thingity);
+          }
+          
         }
       }
     }
     return possibilities;
   }
-  //FIXME: Recursion is goofy so other innacurate "versions" of the word show up, which ditch suffixes and prefixes. Can be fixed by checking if the *word* is in the list as well, not the whole list.
+
   List getAllPossibilities(String word){
     List<List> possibilities = [];
     
@@ -50,7 +72,18 @@ class Translator{
       List thingy = getAllPossibilities(possibilities[i][possibilities[i].length - 1]);
       for(int x = 0; x < thingy.length; x++){
         if(!BgScripts.listContains(possibilities,thingy[x])){
-          possibilities.add(thingy[x]);
+          String wordy = thingy[x][thingy[x].length-1];
+          bool inList = false;
+          for(int j = 0; j < possibilities.length; j++){
+            if(possibilities[j][possibilities[j].length-1] == wordy){
+              inList = true;
+              break;
+            }
+          }
+          if(!inList){
+            possibilities.add(thingy[x]);
+          }
+          
         }
       }
     }
