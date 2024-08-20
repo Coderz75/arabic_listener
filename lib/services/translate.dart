@@ -37,6 +37,7 @@ class Translator{
     }
     return possibilities;
   }
+  //FIXME: Recursion is goofy so other innacurate "versions" of the word show up, which ditch suffixes and prefixes. Can be fixed by checking if the *word* is in the list as well, not the whole list.
   List getAllPossibilities(String word){
     List<List> possibilities = [];
     
@@ -68,10 +69,12 @@ class Translator{
       String word = input.split(' ')[i];
       if(word.isNotEmpty){
         List searches = [];
-
         List zz = getAllPossibilities(word);
         for(int j = 0; j < zz.length; j++){
-          searches.add(zz[j][zz[j].length-1]);
+          String newSearch = zz[j][zz[j].length-1];
+          if(!searches.contains(newSearch)){
+            searches.add(newSearch);
+          }
         }
         List matches =[];
         
@@ -79,7 +82,7 @@ class Translator{
         print(searches);
 
         // 0 = Ambiguous, 1 = ism, 2 = fel, 3 = harf 
-        int wordType = 0;
+        //int wordType = 0;
 
         //advanced:
         
