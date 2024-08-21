@@ -35,14 +35,7 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _initSpeech();
-  }
-
-
-  /// This has to happen only once per app
-  void _initSpeech() async {
-    _speechEnabled = await _speechToText.initialize();
-    setState(() {});
+    BgScripts.init();
   }
 
   /// Each time to start a speech recognition session
@@ -52,12 +45,12 @@ class HomePageState extends State<HomePage> {
       _speechEnabled = await _speechToText.initialize();
       if(!_speechEnabled){
         return;
-      }
+      }   
     }
     if (await Permission.speech.request().isGranted) {
       await _speechToText.listen(
         onResult: _onSpeechResult,
-        localeId: 'ar_SA',
+        localeId: 'ar_DZ',
         pauseFor: const Duration(seconds: 20),
         
       );
@@ -102,12 +95,9 @@ class HomePageState extends State<HomePage> {
       }
       var word = picked[0];
       var def = picked[1];
-      var root = "";
-      if(picked.length == 3){
-        root = picked[2];
-      }
+
       wordDef.add(
-        WordDefCard(word: word, def: def, root: root, isAmbigous: isAmbiguous, index: i, home: this),
+        WordDefCard(word: word, def: def, data: picked[2], isAmbigous: isAmbiguous, index: i, home: this),
       );
       
     }

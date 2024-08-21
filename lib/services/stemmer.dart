@@ -44,12 +44,15 @@ class Stemmer{
   }
 
   static List<dynamic> prefixes(String word){
-    return _stemming(data["prefixes"]["regex"], data["prefixes"], word);
+    return _stemming(stemData["prefixes"]["regex"], stemData["prefixes"], word);
   }
 
   static List<dynamic> suffixes(String word){
-    List thing1 = _stemming(data["suffixes"]["regex"], data["suffixes"], word);
-    List thing2 = _stemming(data["suffixes2"]["regex"], data["suffixes2"], word);
+    List thing1 = _stemming(stemData["suffixes"]["regex"], stemData["suffixes"], word);
+    List thing2 = _stemming(stemData["suffixes2"]["regex"], stemData["suffixes2"], word);
+    if(thing1[0] == word){
+      thing1.clear();
+    }
     for(dynamic x in thing2){
       if(!thing1.contains(x)){
         thing1.add(x);
@@ -129,8 +132,10 @@ class Stemmer{
     return word;
   }
 
-  static Map<String,dynamic> data = {
+  static Map<String,String> typeData = {};
+  static Map<String,dynamic> stemData = {
     "prefixes":{ // Nouns only
+      "type": "prefix",
       "regex": "^(&)(.*)",
       "matches": [2],
       "length": 4,
@@ -144,6 +149,7 @@ class Stemmer{
       }
     },
     "suffixes":{
+      "type": "suffix",
       "regex": "^(.*)(&)",
       "matches": [1],
       "length": 6,
@@ -155,28 +161,29 @@ class Stemmer{
         "تما": "You (dual)",
       }
     },
-    "suffixes2":{ // (ون|ان|ين|تن|كم|هن|نا|تم|ات|يا|كن|ني|ما|ها|وا|هم)
-        "regex": "^(.*)(&)",
-        "matches": [1],
-        "length": 5,
-        "items": {
-          "ون": "Masculine plural",
-          "ان": "Masculine Dual",
-          "ين": "Masculine plural",
-          "تن": "idk",
-          "كم": ["Your (posession)", "You (object)"],
-          "هن": ["Their (posession)", "They (subject)"],
-          "نا": ["Our (posession)", "We (subject)"],
-          "تم": "You (subject)",
-          "ات": "Feminine plural",
-          //"يا": "Masculine Dual",
-          "كن": ["Your (posession)", "You (object)"],
-          "ني": "Me (object)",
-          //"ما": ["Your (posession)", "You (object)"],
-          "ها": ["Hers (posession)", "Her (object)"],
-          "وا": "They (past tense; subject)",
-          "هم": ["Their (posession)", "Them (object)"],
-        }
+    "suffixes2":{ 
+      "type": "suffix",
+      "regex": "^(.*)(&)",
+      "matches": [1],
+      "length": 5,
+      "items": {
+        "ون": "Masculine plural",
+        "ان": "Masculine Dual",
+        "ين": "Masculine plural",
+        "تن": "idk",
+        "كم": ["Your (posession)", "You (object)"],
+        "هن": ["Their (posession)", "They (subject)"],
+        "نا": ["Our (posession)", "We (subject)"],
+        "تم": "You (subject)",
+        "ات": "Feminine plural",
+        //"يا": "Masculine Dual",
+        "كن": ["Your (posession)", "You (object)"],
+        "ني": "Me (object)",
+        //"ما": ["Your (posession)", "You (object)"],
+        "ها": ["Hers (posession)", "Her (object)"],
+        "وا": "They (past tense; subject)",
+        "هم": ["Their (posession)", "Them (object)"],
+      }
     },
     /*
     "Specifity": {

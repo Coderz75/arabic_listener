@@ -17,7 +17,7 @@ class Translator{
     String thing = x.split(" ")[1];
     return thing;
   }
-  List<List> _possibilityScanner(List thing, List<List> possibilities){
+  List<List> _possibilityScanner(List thing, List<List> possibilities, List prev){
     if(thing.length != 1){
       if(!BgScripts.listContains(possibilities,thing)){
         String wordy = thing[thing.length-1];
@@ -29,14 +29,13 @@ class Translator{
           }
         }
         if(!inList){
-          possibilities.add(thing);
+          possibilities.add(prev + thing);
         }
-        
       }
       List<List> other = [];
       for(int i = 0; i < thing.length-1; i++){
         other.add(thing[i]);
-        List thingity = [];
+        List thingity = prev;
         for(int j = 0; j < other.length; j++){
           thingity.add(other[j]);
         }
@@ -51,7 +50,7 @@ class Translator{
             }
           }
           if(!inList){
-            possibilities.add(thingity);
+            possibilities.add(prev + thingity);
           }
           
         }
@@ -60,16 +59,17 @@ class Translator{
     return possibilities;
   }
 
-  List getAllPossibilities(String word){
+  List getAllPossibilities(String word, List prev){
     List<List> possibilities = [];
     
     List thing = Stemmer.prefixes(word);
-    possibilities = _possibilityScanner(thing,possibilities);
+    possibilities = _possibilityScanner(thing,possibilities,prev);
     thing = Stemmer.suffixes(word);
-    possibilities = _possibilityScanner(thing,possibilities);
+    possibilities = _possibilityScanner(thing,possibilities,prev);
 
     for(int i = 0; i < possibilities.length; i++){
-      List thingy = getAllPossibilities(possibilities[i][possibilities[i].length - 1]);
+      int end = possibilities[i].length - 1;
+      List thingy = getAllPossibilities(possibilities[i][end],possibilities[i].sublist(0,end));
       for(int x = 0; x < thingy.length; x++){
         if(!BgScripts.listContains(possibilities,thingy[x])){
           String wordy = thingy[x][thingy[x].length-1];
@@ -102,17 +102,21 @@ class Translator{
       String word = input.split(' ')[i];
       if(word.isNotEmpty){
         List searches = [];
-        List zz = getAllPossibilities(word);
+        Map<String,List> matchData ={};
+        List zz = getAllPossibilities(word, []);
         for(int j = 0; j < zz.length; j++){
           String newSearch = zz[j][zz[j].length-1];
+          
           if(!searches.contains(newSearch)){
             searches.add(newSearch);
+            matchData[newSearch] = zz[j].sublist(0,zz[j].length-1);
           }
         }
         List matches =[];
         
         print(zz);
         print(searches);
+        print(matchData);
 
         // 0 = Ambiguous, 1 = ism, 2 = fel, 3 = harf 
         //int wordType = 0;
@@ -123,13 +127,17 @@ class Translator{
         var found = false;
         for(var v in data.values) {
           if(searches.contains(v["word"])){
-            matches.add([v["word"],v["definition"],""]);
+            String def = v["definition"];
+            if(def.startsWith(v["word"])){
+              def = def.split(" ").sublist(1,def.split(" ").length).join(" ");
+            }
+            matches.add([v["word"],def,matchData[v["word"]]]);
             found = true;
           }
         }
         
         if(!found){
-          wordData.add([word, "No data", ""]);
+          wordData.add([word, "No data", []]);
         }else{
           if(matches.length == 1){
             wordData.add(matches[0]);

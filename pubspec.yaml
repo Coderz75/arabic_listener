@@ -15,6 +15,7 @@ dependencies:
   flutter_js: ^0.8.0
   path: ^1.9.0
   toggle_switch: ^2.3.0
+  collection: 
     
 
 dev_dependencies:
