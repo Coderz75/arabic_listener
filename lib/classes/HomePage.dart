@@ -83,14 +83,21 @@ class HomePageState extends State<HomePage> {
       var picked = wordData[i];
       var isAmbiguous= false;
       if(picked[0] is List){
+        int num = -1;
+        if(BgScripts.picked[i] != null){
+          num = BgScripts.picked[i]!;
+          if(num >= picked.length){
+            BgScripts.picked.removeWhere((key, value) => key == i);
+          }else{
+            picked = picked[BgScripts.picked[i]!];
+            isAmbiguous = true;
+          }
+        }
         if(BgScripts.picked[i] == null){
           wordDef.add(
             WordChooser(words: picked, index: i, home: this)
           );
           continue;
-        }else{
-          picked = picked[BgScripts.picked[i]];
-          isAmbiguous = true;
         }
       }
       var word = picked[0];

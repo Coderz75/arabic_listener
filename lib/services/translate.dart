@@ -18,6 +18,8 @@ class Translator{
     return thing;
   }
 
+  String oldInput = "";
+
 
   List<List> _possibilityScanner(List thing, List<List> possibilities, List prev){
     if(thing.length != 1){
@@ -101,9 +103,25 @@ class Translator{
 
   List translate(String input){
     List wordData =[];
+    Map<int,int> newPicks = {};
+    List inputList = input.split(' ');
+    inputList.removeWhere((str) => str.isEmpty);
+    List oldList = oldInput.split(' ');
+    oldList.removeWhere((str) => str.isEmpty);
 
-    for(int wordI = 0; wordI < input.split(' ').length; wordI++) {
-      String word = input.split(' ')[wordI];
+    for(int i=0;i<inputList.length; i++){
+      for(int j=0;j<oldList.length; j++){
+        if(oldList[j]==inputList[i]){
+          if(BgScripts.picked[j] != null){
+            newPicks[i]= BgScripts.picked[j]!;
+          }
+        }
+      }  
+    }
+    oldInput = input;
+    BgScripts.picked = newPicks;
+    for(int wordI = 0; wordI < inputList.length; wordI++) {
+      String word = inputList[wordI];
       if(word.isNotEmpty){
         List searches = [];
         Map<String,List> matchData ={};
