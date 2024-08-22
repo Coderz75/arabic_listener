@@ -24,4 +24,17 @@ class BgScripts{
     }
     return false;
   }
+
+  static double stringSimilarity(String str1, String str2) {
+    // Convert strings to sets of characters
+    Set<String> set1 = str1.toLowerCase().split('').toSet();
+    Set<String> set2 = str2.toLowerCase().split('').toSet();
+
+    // Calculate intersection and union
+    int intersectionSize = set1.intersection(set2).length;
+    int unionSize = set1.union(set2).length;
+
+    // Return the Jaccard similarity (intersection / union)
+    return unionSize == 0 ? 0.0 : intersectionSize / unionSize;
+  }
 }

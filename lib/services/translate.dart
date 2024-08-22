@@ -17,6 +17,8 @@ class Translator{
     String thing = x.split(" ")[1];
     return thing;
   }
+
+
   List<List> _possibilityScanner(List thing, List<List> possibilities, List prev){
     if(thing.length != 1){
       if(!BgScripts.listContains(possibilities,thing)){
@@ -96,13 +98,16 @@ class Translator{
     }
     return possibilities;
   }
+
   List translate(String input){
     List wordData =[];
-    for(int i = 0; i < input.split(' ').length; i++) {
-      String word = input.split(' ')[i];
+
+    for(int wordI = 0; wordI < input.split(' ').length; wordI++) {
+      String word = input.split(' ')[wordI];
       if(word.isNotEmpty){
         List searches = [];
         Map<String,List> matchData ={};
+        Map<String,int> moreData = {};
         List zz = getAllPossibilities(word, []);
         for(int j = 0; j < zz.length; j++){
           String newSearch = zz[j][zz[j].length-1];
@@ -114,15 +119,28 @@ class Translator{
         }
         List matches =[];
         
+        // 0 = Ambiguous, 1 = ism, 2 = fel, 3 = harf 
+        //int probableWord = 0;
+
+        //advanced:
+        for(MapEntry<String,List> item in matchData.entries){
+          int wordType = 0;
+          List parse = item.value;
+          for(int i = 0; i < parse.length; i++){
+            //Ism
+            print(Stemmer.typeData[parse[i][0]]);
+            if(Stemmer.typeData[parse[i][0]] == "prefix"){
+              wordType = 1;
+              //probableWord = 1;
+            }
+          }
+          moreData[item.key] = wordType;
+        }
+
         print(zz);
         print(searches);
         print(matchData);
-
-        // 0 = Ambiguous, 1 = ism, 2 = fel, 3 = harf 
-        //int wordType = 0;
-
-        //advanced:
-        
+        print(moreData);
 
         var found = false;
         for(var v in data.values) {
@@ -142,13 +160,28 @@ class Translator{
           if(matches.length == 1){
             wordData.add(matches[0]);
           }else{
+            List<double> similarity = [];
+            double best = 0;
+            int guessedI = -1;
             for(int i = 0; i < matches.length; i++){
               var z = matches[i];
               var masdr = getMasdr(z[1]);
               var wordHarakat = getHarakat(word, masdr);
               matches[i].add(masdr);
               matches[i].add(wordHarakat);
+              double similar = BgScripts.stringSimilarity(z[0], word);
+              similarity.add(similar);
+              if(similar > best){
+                best = similar;
+                guessedI = i;
+              }else if (similar == best){
+                guessedI = -1;
+              }
             }
+            if(guessedI != -1){
+              BgScripts.picked[wordI] = guessedI;
+            }
+
             wordData.add(matches);
           }
         }
