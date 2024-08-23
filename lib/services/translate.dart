@@ -146,7 +146,6 @@ class Translator{
           List parse = item.value;
           for(int i = 0; i < parse.length; i++){
             //Ism
-            print(Stemmer.typeData[parse[i][0]]);
             if(Stemmer.typeData[parse[i][0]] == "prefix"){
               wordType = 1;
               //probableWord = 1;
@@ -154,11 +153,6 @@ class Translator{
           }
           moreData[item.key] = wordType;
         }
-
-        print(zz);
-        print(searches);
-        print(matchData);
-        print(moreData);
 
         var found = false;
         for(var v in data.values) {

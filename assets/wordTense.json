@@ -1,0 +1,105 @@
+{
+    "^(.*)(?=\u00d8\u00a7$)": [
+        "They (2) did"
+    ],
+    "^(.*)(?=\u00d9\u02c6\u00d8\u00a7$)": [
+        "They (plural) did"
+    ],
+    "^(.*)(?=\u00d8\u00aa$)": [
+        "She did",
+        "You did (m&f)",
+        "I did"
+    ],
+    "^(.*)(?=\u00d8\u00aa\u00d8\u00a7$)": [
+        "They (2) did (f)"
+    ],
+    "^(.*)(?=\u00d9\u2020$)": [
+        "They (plural) did (f)"
+    ],
+    "^(.*)(?=\u00d8\u00aa\u00d9\u2026\u00d8\u00a7$)": [
+        "You (2) did (m&f)"
+    ],
+    "^(.*)(?=\u00d8\u00aa\u00d9\u2026$)": [
+        "You (plural) did"
+    ],
+    "^(.*)(?=\u00d8\u00aa\u00d9\u2020$)": [
+        "You (plural) did (f)"
+    ],
+    "^(.*)(?=\u00d9\u2020\u00d8\u00a7$)": [
+        "We did"
+    ],
+    "^\u00d9\u0160(.*)(?=\u00d8\u00a7\u00d9\u2020$)": [
+        "They (2) are doing/will do "
+    ],
+    "^\u00d9\u0160(.*)(?=\u00d9\u02c6\u00d9\u2020$)": [
+        "They (plural) are doing/will do"
+    ],
+    "^\u00d8\u00aa(.*)": [
+        "She is doing/will do",
+        "You are doing/ will do (m)"
+    ],
+    "^\u00d8\u00aa(.*)(?=\u00d8\u00a7\u00d9\u2020$)": [
+        "They (2) are doing/will do",
+        "You (2) are doing/ will do (m&f)"
+    ],
+    "^\u00d9\u0160(.*)(?=\u00d9\u2020$)": [
+        "They (plural) are doing/will do"
+    ],
+    "^\u00d8\u00aa(.*)(?=\u00d9\u02c6\u00d9\u2020$)": [
+        "You (plural) are doing/will do"
+    ],
+    "^\u00d8\u00aa(.*)(?=\u00d9\u0160\u00d9\u2020$)": [
+        "You are doing/will do (f)"
+    ],
+    "^\u00d8\u00aa(.*)(?=\u00d9\u2020$)": [
+        "You (plural) are doing/will do (f)"
+    ],
+    "^\u00d8\u00a7(.*)": [
+        "I am doing/will do"
+    ],
+    "^\u00d9\u2020(.*)": [
+        "We are doing/will do "
+    ],
+    "---\n": [],
+    "^\u00d9\u0160(.*)(?=\u00d8\u00a7$)": [
+        "They (2) will never do (should be preceded by \u00d9\u201e\u00d9\u2020)"
+    ],
+    "^\u00d9\u0160(.*)(?=\u00d9\u02c6\u00d8\u00a7$)": [
+        "They (plural) will never do (should be preceded by \u00d9\u201e\u00d9\u2020)"
+    ],
+    "^\u00d8\u00aa(.*)(?=\u00d8\u00a7$)": [
+        "They (2) will never do (f) (should be preceded by \u00d9\u201e\u00d9\u2020)",
+        "You (2) will never do (m&f) (should be preceded by \u00d9\u201e\u00d9\u2020)"
+    ],
+    "^\u00d8\u00aa(.*)(?=\u00d9\u02c6\u00d8\u00a7$)": [
+        "You (plural) will never do (should be preceded by \u00d9\u201e\u00d9\u2020)"
+    ],
+    "^\u00d8\u00aa(.*)(?=\u00d9\u0160$)": [
+        "You will never do (f) (should be preceded by \u00d9\u201e\u00d9\u2020)"
+    ],
+    "^\u00d9\u201e\u00d9\u0160(.*)(?=\u00d9\u2020$)": [
+        "He will most certainly do",
+        "They (plural) would most certainly do "
+    ],
+    "^\u00d9\u201e\u00d9\u0160(.*)(?=\u00d8\u00a7\u00d9\u2020$),They (2) will most most certainly do\n": [],
+    "^\u00d9\u201e\u00d8\u00aa(.*)(?=\u00d9\u2020$)": [
+        "She will most certainly do",
+        "You will most certainly do (m)",
+        "You (plural) will most certainly do"
+    ],
+    "^\u00d9\u201e\u00d8\u00aa(.*)(?=\u00d8\u00a7\u00d9\u2020$),They (2) will most most certainly do (f) ": [
+        "You (2) will most certainly do"
+    ],
+    "^\u00d9\u201e\u00d9\u0160(.*)(?=\u00d9\u2020\u00d8\u00a7\u00d9\u2020$)": [
+        "They (plural) will most certainly do (f)"
+    ],
+    "^\u00d9\u201e\u00d8\u00aa(.*)(?=\u00d9\u2020\u00d8\u00a7\u00d9\u2020$)": [
+        "You (plural) will most certainly do (f)"
+    ],
+    "^\u00d9\u201e\u00d8\u00a7(.*)(?=\u00d9\u2020$)": [
+        "I will most certainly do"
+    ],
+    "^\u00d9\u201e\u00d9\u2020(.*)(?=\u00d9\u2020$)": [
+        "We will most certainly do"
+    ]
+}

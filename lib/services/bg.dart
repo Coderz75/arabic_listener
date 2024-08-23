@@ -1,5 +1,7 @@
 import 'package:collection/collection.dart';
 import '../services/stemmer.dart';
+import 'package:flutter/services.dart';
+import 'dart:convert';
 
 class BgScripts{
   static Map<int,int> picked={};
@@ -11,6 +13,11 @@ class BgScripts{
         Stemmer.typeData[item.key] = group.value["type"];
       }
     }
+    initAsync();
+  }
+  static void initAsync() async{
+    String response = await rootBundle.loadString('assets/new_data.json');
+    Stemmer.wordTenseData = await json.decode(response);
   }
   
   static void picker(int x, int y){

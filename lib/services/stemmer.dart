@@ -61,6 +61,10 @@ class Stemmer{
     return thing1;
   }
 
+  static int getWordForm(String word){
+    return -1;
+  }
+
   static String wordStemmer(var word){
     //Remove diacritics
     word = removeAllHarakat(word);
@@ -131,8 +135,9 @@ class Stemmer{
     }
     return word;
   }
+  static Map<String,List> wordTenseData = {};
 
-  static Map<String,String> typeData = {};
+  static Map<String,String> typeData = {}; // Automatically fills via stemdata during initilization (view bg.dart)
   static Map<String,dynamic> stemData = {
     "prefixes":{ // Nouns only
       "type": "prefix",
