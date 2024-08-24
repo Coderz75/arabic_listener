@@ -12,6 +12,8 @@ class Translator{
   void init() async {
     String response = await rootBundle.loadString('assets/new_data.json');
     data = await json.decode(response);
+    response = await rootBundle.loadString('assets/wordTense.json');
+    Stemmer.wordTenseData = await json.decode(response) ;
   }
   String getMasdr(String x){
     String thing = x.split(" ")[1];
@@ -39,7 +41,10 @@ class Translator{
       List<List> other = [];
       for(int i = 0; i < thing.length-1; i++){
         other.add(thing[i]);
-        List thingity = prev;
+        List thingity = [];
+        for(dynamic val in prev){
+          thingity.add(val);
+        }
         for(int j = 0; j < other.length; j++){
           thingity.add(other[j]);
         }
@@ -70,7 +75,16 @@ class Translator{
     possibilities = _possibilityScanner(thing,possibilities,prev);
     thing = Stemmer.suffixes(word);
     possibilities = _possibilityScanner(thing,possibilities,prev);
-
+    
+    thing = Stemmer.wordTense(word);
+    if(thing.isNotEmpty){
+      if(prev.isEmpty){
+        for(int i = 0; i < thing.length; i++){
+          print([thing[i]] + [thing[i][2]]);
+          possibilities.add([thing[i]] + [thing[i][2]]);
+        }
+      }
+    }
     for(int i = 0; i < possibilities.length; i++){
       int end = possibilities[i].length - 1;
       List thingy = getAllPossibilities(possibilities[i][end],possibilities[i].sublist(0,end));
@@ -129,14 +143,33 @@ class Translator{
         List zz = getAllPossibilities(word, []);
         for(int j = 0; j < zz.length; j++){
           String newSearch = zz[j][zz[j].length-1];
-          
           if(!searches.contains(newSearch)){
-            searches.add(newSearch);
-            matchData[newSearch] = zz[j].sublist(0,zz[j].length-1);
+            bool notGoofy = true;
+            for(int k = 0; k < zz[j].length-1; k++){
+              String type = zz[j][k][0];
+              if(type == "Verb"){
+                if(newSearch == "فعل"){
+                  print(k);
+                  for(dynamic mmm in zz[j][k]){
+                    print(mmm);
+                  }
+                }
+                if(k != 0){
+                  notGoofy = false;
+                  break;
+                }
+              }
+            }
+            if(notGoofy){
+              searches.add(newSearch);
+              matchData[newSearch] = zz[j].sublist(0,zz[j].length-1);  
+            }
           }
         }
         List matches =[];
-        
+        print(searches);
+        print(matchData);
+
         // 0 = Ambiguous, 1 = ism, 2 = fel, 3 = harf 
         //int probableWord = 0;
 
@@ -149,6 +182,9 @@ class Translator{
             if(Stemmer.typeData[parse[i][0]] == "prefix"){
               wordType = 1;
               //probableWord = 1;
+            }
+            if(parse[i][0] == "Verb"){
+              wordType = 2;
             }
           }
           moreData[item.key] = wordType;

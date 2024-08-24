@@ -7,7 +7,7 @@
 ^(.*)(?=تم$), You (plural) did
 ^(.*)(?=تن$), You (plural) did (f)
 ^(.*)(?=نا$), We did
-----
+---
 ^ي(.*)(?=ان$), They (2) are doing/will do 
 ^ي(.*)(?=ون$), They (plural) are doing/will do
 ^ت(.*), She is doing/will do , You are doing/ will do (m)
@@ -26,9 +26,9 @@
 ^ت(.*)(?=ي$), You will never do (f) (should be preceded by لن)
 ---
 ^لي(.*)(?=ن$), He will most certainly do , They (plural) would most certainly do 
-^لي(.*)(?=ان$),They (2) will most most certainly do
+^لي(.*)(?=ان$), They (2) will most most certainly do
 ^لت(.*)(?=ن$), She will most certainly do , You will most certainly do (m) , You (plural) will most certainly do
-^لت(.*)(?=ان$),They (2) will most most certainly do (f) , You (2) will most certainly do
+^لت(.*)(?=ان$), They (2) will most most certainly do (f) , You (2) will most certainly do
 ^لي(.*)(?=نان$), They (plural) will most certainly do (f)
 ^لت(.*)(?=نان$), You (plural) will most certainly do (f)
 ^لا(.*)(?=ن$), I will most certainly do

@@ -47,11 +47,21 @@ class WordDefCard extends StatelessWidget {
     bool actualWordIn = false;
     TextSpan spacer = const TextSpan(text: "·", style: TextStyle(fontWeight: FontWeight.bold));
     String fullText = "";
-
+    for(dynamic x in data){
+      print(x);
+    }
     for(int i = 0; i < data.length; i++){
       String particle = data[i][0];
-      String trans = data[i][1];
-      String type = Stemmer.typeData[particle] as String;
+      String trans = "";
+      String type = "";
+      if(particle != "Verb"){
+        type =Stemmer.typeData[particle] as String;
+        trans = data[i][1];
+      }else{
+        particle = data[i][2];
+        type = "Verb";
+        trans = data[i][1].join(" / ");
+      }
       TextStyle style = const TextStyle();
       if(type == "suffix"){
         if(!actualWordIn){
@@ -65,6 +75,17 @@ class WordDefCard extends StatelessWidget {
         style = const TextStyle();
       }
       else if(type == "suffix"){
+        style = const TextStyle();
+      }
+      else if(type == "Verb"){
+        if(!actualWordIn){
+          actualWordIn = true;
+          style =const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue);
+          text.add(TextSpan(text: word, style: style));
+          text.add(spacer);
+          more.add(Translation(word: word, style: style, def: def));
+          fullText += word;
+        }
         style = const TextStyle();
       }
       text.add(TextSpan(text: particle, style: style));

@@ -1,105 +1,108 @@
 {
-    "^(.*)(?=\u00d8\u00a7$)": [
-        "They (2) did"
+    "^\u0644\u064a(.*)(?=\u0646\u0627\u0646$)": [
+        "They (plural) will most certainly do (f)"
     ],
-    "^(.*)(?=\u00d9\u02c6\u00d8\u00a7$)": [
-        "They (plural) did"
+    "^\u0644\u062a(.*)(?=\u0646\u0627\u0646$)": [
+        "You (plural) will most certainly do (f)"
     ],
-    "^(.*)(?=\u00d8\u00aa$)": [
-        "She did",
-        "You did (m&f)",
-        "I did"
+    "^\u0644\u064a(.*)(?=\u0627\u0646$)": [
+        "They (2) will most most certainly do"
     ],
-    "^(.*)(?=\u00d8\u00aa\u00d8\u00a7$)": [
-        "They (2) did (f)"
+    "^\u0644\u062a(.*)(?=\u0627\u0646$)": [
+        "They (2) will most most certainly do (f)",
+        "You (2) will most certainly do"
     ],
-    "^(.*)(?=\u00d9\u2020$)": [
-        "They (plural) did (f)"
-    ],
-    "^(.*)(?=\u00d8\u00aa\u00d9\u2026\u00d8\u00a7$)": [
+    "^(.*)(?=\u062a\u0645\u0627$)": [
         "You (2) did (m&f)"
     ],
-    "^(.*)(?=\u00d8\u00aa\u00d9\u2026$)": [
-        "You (plural) did"
-    ],
-    "^(.*)(?=\u00d8\u00aa\u00d9\u2020$)": [
-        "You (plural) did (f)"
-    ],
-    "^(.*)(?=\u00d9\u2020\u00d8\u00a7$)": [
-        "We did"
-    ],
-    "^\u00d9\u0160(.*)(?=\u00d8\u00a7\u00d9\u2020$)": [
+    "^\u064a(.*)(?=\u0627\u0646$)": [
         "They (2) are doing/will do "
     ],
-    "^\u00d9\u0160(.*)(?=\u00d9\u02c6\u00d9\u2020$)": [
+    "^\u064a(.*)(?=\u0648\u0646$)": [
         "They (plural) are doing/will do"
     ],
-    "^\u00d8\u00aa(.*)": [
-        "She is doing/will do",
-        "You are doing/ will do (m)"
-    ],
-    "^\u00d8\u00aa(.*)(?=\u00d8\u00a7\u00d9\u2020$)": [
+    "^\u062a(.*)(?=\u0627\u0646$)": [
         "They (2) are doing/will do",
         "You (2) are doing/ will do (m&f)"
     ],
-    "^\u00d9\u0160(.*)(?=\u00d9\u2020$)": [
-        "They (plural) are doing/will do"
-    ],
-    "^\u00d8\u00aa(.*)(?=\u00d9\u02c6\u00d9\u2020$)": [
+    "^\u062a(.*)(?=\u0648\u0646$)": [
         "You (plural) are doing/will do"
     ],
-    "^\u00d8\u00aa(.*)(?=\u00d9\u0160\u00d9\u2020$)": [
+    "^\u062a(.*)(?=\u064a\u0646$)": [
         "You are doing/will do (f)"
     ],
-    "^\u00d8\u00aa(.*)(?=\u00d9\u2020$)": [
-        "You (plural) are doing/will do (f)"
+    "^\u064a(.*)(?=\u0648\u0627$)": [
+        "They (plural) will never do (should be preceded by \u0644\u0646)"
     ],
-    "^\u00d8\u00a7(.*)": [
-        "I am doing/will do"
+    "^\u062a(.*)(?=\u0648\u0627$)": [
+        "You (plural) will never do (should be preceded by \u0644\u0646)"
     ],
-    "^\u00d9\u2020(.*)": [
-        "We are doing/will do "
-    ],
-    "---\n": [],
-    "^\u00d9\u0160(.*)(?=\u00d8\u00a7$)": [
-        "They (2) will never do (should be preceded by \u00d9\u201e\u00d9\u2020)"
-    ],
-    "^\u00d9\u0160(.*)(?=\u00d9\u02c6\u00d8\u00a7$)": [
-        "They (plural) will never do (should be preceded by \u00d9\u201e\u00d9\u2020)"
-    ],
-    "^\u00d8\u00aa(.*)(?=\u00d8\u00a7$)": [
-        "They (2) will never do (f) (should be preceded by \u00d9\u201e\u00d9\u2020)",
-        "You (2) will never do (m&f) (should be preceded by \u00d9\u201e\u00d9\u2020)"
-    ],
-    "^\u00d8\u00aa(.*)(?=\u00d9\u02c6\u00d8\u00a7$)": [
-        "You (plural) will never do (should be preceded by \u00d9\u201e\u00d9\u2020)"
-    ],
-    "^\u00d8\u00aa(.*)(?=\u00d9\u0160$)": [
-        "You will never do (f) (should be preceded by \u00d9\u201e\u00d9\u2020)"
-    ],
-    "^\u00d9\u201e\u00d9\u0160(.*)(?=\u00d9\u2020$)": [
+    "^\u0644\u064a(.*)(?=\u0646$)": [
         "He will most certainly do",
         "They (plural) would most certainly do "
     ],
-    "^\u00d9\u201e\u00d9\u0160(.*)(?=\u00d8\u00a7\u00d9\u2020$),They (2) will most most certainly do\n": [],
-    "^\u00d9\u201e\u00d8\u00aa(.*)(?=\u00d9\u2020$)": [
+    "^\u0644\u062a(.*)(?=\u0646$)": [
         "She will most certainly do",
         "You will most certainly do (m)",
         "You (plural) will most certainly do"
     ],
-    "^\u00d9\u201e\u00d8\u00aa(.*)(?=\u00d8\u00a7\u00d9\u2020$),They (2) will most most certainly do (f) ": [
-        "You (2) will most certainly do"
-    ],
-    "^\u00d9\u201e\u00d9\u0160(.*)(?=\u00d9\u2020\u00d8\u00a7\u00d9\u2020$)": [
-        "They (plural) will most certainly do (f)"
-    ],
-    "^\u00d9\u201e\u00d8\u00aa(.*)(?=\u00d9\u2020\u00d8\u00a7\u00d9\u2020$)": [
-        "You (plural) will most certainly do (f)"
-    ],
-    "^\u00d9\u201e\u00d8\u00a7(.*)(?=\u00d9\u2020$)": [
+    "^\u0644\u0627(.*)(?=\u0646$)": [
         "I will most certainly do"
     ],
-    "^\u00d9\u201e\u00d9\u2020(.*)(?=\u00d9\u2020$)": [
+    "^\u0644\u0646(.*)(?=\u0646$)": [
         "We will most certainly do"
-    ]
+    ],
+    "^(.*)(?=\u0648\u0627$)": [
+        "They (plural) did"
+    ],
+    "^(.*)(?=\u062a\u0627$)": [
+        "They (2) did (f)"
+    ],
+    "^(.*)(?=\u062a\u0645$)": [
+        "You (plural) did"
+    ],
+    "^(.*)(?=\u062a\u0646$)": [
+        "You (plural) did (f)"
+    ],
+    "^(.*)(?=\u0646\u0627$)": [
+        "We did"
+    ],
+    "^\u064a(.*)(?=\u0646$)": [
+        "They (plural) are doing/will do"
+    ],
+    "^\u062a(.*)(?=\u0646$)": [
+        "You (plural) are doing/will do (f)"
+    ],
+    "^\u064a(.*)(?=\u0627$)": [
+        "They (2) will never do (should be preceded by \u0644\u0646)"
+    ],
+    "^\u062a(.*)(?=\u0627$)": [
+        "They (2) will never do (f) (should be preceded by \u0644\u0646)",
+        "You (2) will never do (m&f) (should be preceded by \u0644\u0646)"
+    ],
+    "^\u062a(.*)(?=\u064a$)": [
+        "You will never do (f) (should be preceded by \u0644\u0646)"
+    ],
+    "^(.*)(?=\u0627$)": [
+        "They (2) did"
+    ],
+    "^(.*)(?=\u062a$)": [
+        "She did",
+        "You did (m&f)",
+        "I did"
+    ],
+    "^(.*)(?=\u0646$)": [
+        "They (plural) did (f)"
+    ],
+    "^\u062a(.*)": [
+        "She is doing/will do",
+        "You are doing/ will do (m)"
+    ],
+    "^\u0627(.*)": [
+        "I am doing/will do"
+    ],
+    "^\u0646(.*)": [
+        "We are doing/will do "
+    ],
+    "---\n": []
 }

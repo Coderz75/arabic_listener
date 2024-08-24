@@ -61,6 +61,25 @@ class Stemmer{
     return thing1;
   }
 
+  static List<dynamic> wordTense(String word){
+    List<dynamic> result = [];
+    if(word.length < 3){
+      return [];
+    }
+    if(word.length == 3){
+      return [];
+    }
+    for(MapEntry<String, dynamic> item in wordTenseData.entries){
+      RegExp r = RegExp(item.key, unicode: true);
+      if(r.hasMatch(word)){
+        final match = r.firstMatch(word);
+        final matchedText = match?.group(1); 
+        result.add(["Verb",item.value,matchedText]);
+      }
+    }
+    return result;
+  }
+
   static int getWordForm(String word){
     return -1;
   }
@@ -135,7 +154,7 @@ class Stemmer{
     }
     return word;
   }
-  static Map<String,List> wordTenseData = {};
+  static Map<String,dynamic> wordTenseData = {};
 
   static Map<String,String> typeData = {}; // Automatically fills via stemdata during initilization (view bg.dart)
   static Map<String,dynamic> stemData = {
