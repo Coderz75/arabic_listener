@@ -2,6 +2,9 @@ import '../services/stemmer.dart';
 import 'package:flutter/material.dart';
 import '../services/bg.dart';
 import '../classes/HomePage.dart';
+
+
+//TODO: Fix Visual thing where the card looks like its goofy
 class WordDefCard extends StatelessWidget {
   const WordDefCard({
     super.key,
@@ -11,6 +14,7 @@ class WordDefCard extends StatelessWidget {
     required this.isAmbigous,
     required this.index,
     required this.home,
+    required this.fullData
   });
 
   final String word;
@@ -19,6 +23,7 @@ class WordDefCard extends StatelessWidget {
   final bool isAmbigous;
   final int index;
   final HomePageState home;
+  final List fullData;
   @override
   Widget build(BuildContext context) {
     List<Widget> topRow = [
@@ -46,64 +51,65 @@ class WordDefCard extends StatelessWidget {
     List<Widget> more = [];
     bool actualWordIn = false;
     TextSpan spacer = const TextSpan(text: "·", style: TextStyle(fontWeight: FontWeight.bold));
-    String fullText = "";
-    for(dynamic x in data){
-      print(x);
-    }
-    for(int i = 0; i < data.length; i++){
-      String particle = data[i][0];
-      String trans = "";
-      String type = "";
-      if(particle != "Verb"){
-        type =Stemmer.typeData[particle] as String;
-        trans = data[i][1];
+    if(data.isNotEmpty){
+      print(data[0]);
+      if(data[0][0] == "Verb"){
+        TextStyle style = const TextStyle(fontWeight: FontWeight.bold, color: Colors.green);
+        text.add(TextSpan(text: fullData[3], style: style));
+        more.add(Translation(word: fullData[3], style: style, def: data[0][1].join(' / ')));
+        more.add(Translation(word: word, style: style, def: def));
       }else{
-        particle = data[i][2];
-        type = "Verb";
-        trans = data[i][1].join(" / ");
-      }
-      TextStyle style = const TextStyle();
-      if(type == "suffix"){
+        for(int i = 0; i < data.length; i++){
+          String particle = data[i][0];
+          String trans = "";
+          String type = "";
+          if(particle != "Verb"){
+            type =Stemmer.typeData[particle] as String;
+            trans = data[i][1];
+          }
+          TextStyle style = const TextStyle();
+          if(type == "suffix"){
+            if(!actualWordIn){
+              actualWordIn = true;
+              style =const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue);
+              text.add(TextSpan(text: word, style: style));
+              text.add(spacer);
+              more.add(Translation(word: word, style: style, def: def));
+            }
+            style = const TextStyle();
+          }
+          else if(type == "suffix"){
+            style = const TextStyle();
+          }
+          else if(type == "Verb"){
+            if(!actualWordIn){
+              actualWordIn = true;
+              style =const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue);
+              text.add(TextSpan(text: word, style: style));
+              text.add(spacer);
+              more.add(Translation(word: word, style: style, def: def));
+            }
+            style = const TextStyle();
+          }
+          text.add(TextSpan(text: particle, style: style));
+          text.add(spacer);
+          more.add(Translation(word: particle, style: style, def: trans));
+        }
         if(!actualWordIn){
           actualWordIn = true;
-          style =const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue);
+          TextStyle style =const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue);
           text.add(TextSpan(text: word, style: style));
           text.add(spacer);
           more.add(Translation(word: word, style: style, def: def));
-          fullText += word;
         }
-        style = const TextStyle();
+        text.removeLast();
       }
-      else if(type == "suffix"){
-        style = const TextStyle();
-      }
-      else if(type == "Verb"){
-        if(!actualWordIn){
-          actualWordIn = true;
-          style =const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue);
-          text.add(TextSpan(text: word, style: style));
-          text.add(spacer);
-          more.add(Translation(word: word, style: style, def: def));
-          fullText += word;
-        }
-        style = const TextStyle();
-      }
-      text.add(TextSpan(text: particle, style: style));
-      text.add(spacer);
-      more.add(Translation(word: particle, style: style, def: trans));
-      fullText += particle;
+      
+      topRow.add(Text(fullData[3]));
+    }else{
+      text.add(TextSpan(text: word, style: const TextStyle()));
+      more.add(Translation(word: word, style: const TextStyle(), def: def));
     }
-    if(!actualWordIn){
-      actualWordIn = true;
-      TextStyle style =const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue);
-      text.add(TextSpan(text: word, style: style));
-      text.add(spacer);
-      more.add(Translation(word: word, style: style, def: def));
-      fullText += word;
-    }
-    text.removeLast();
-
-    topRow.add(Text(fullText));
 
     return Card(
       child: Padding(

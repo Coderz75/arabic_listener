@@ -80,7 +80,6 @@ class Translator{
     if(thing.isNotEmpty){
       if(prev.isEmpty){
         for(int i = 0; i < thing.length; i++){
-          print([thing[i]] + [thing[i][2]]);
           possibilities.add([thing[i]] + [thing[i][2]]);
         }
       }
@@ -148,12 +147,6 @@ class Translator{
             for(int k = 0; k < zz[j].length-1; k++){
               String type = zz[j][k][0];
               if(type == "Verb"){
-                if(newSearch == "فعل"){
-                  print(k);
-                  for(dynamic mmm in zz[j][k]){
-                    print(mmm);
-                  }
-                }
                 if(k != 0){
                   notGoofy = false;
                   break;
@@ -166,9 +159,8 @@ class Translator{
             }
           }
         }
-        List matches =[];
         print(searches);
-        print(matchData);
+        List matches =[];
 
         // 0 = Ambiguous, 1 = ism, 2 = fel, 3 = harf 
         //int probableWord = 0;
@@ -179,7 +171,7 @@ class Translator{
           List parse = item.value;
           for(int i = 0; i < parse.length; i++){
             //Ism
-            if(Stemmer.typeData[parse[i][0]] == "prefix"){
+            if(Stemmer.typeData[parse[i][0]] == "prefix" || Stemmer.typeData[parse[i][0]] == "suffix"){
               wordType = 1;
               //probableWord = 1;
             }
@@ -189,7 +181,6 @@ class Translator{
           }
           moreData[item.key] = wordType;
         }
-
         var found = false;
         for(var v in data.values) {
           if(searches.contains(v["word"])){
@@ -197,13 +188,23 @@ class Translator{
             if(def.startsWith(v["word"])){
               def = def.split(" ").sublist(1,def.split(" ").length).join(" ");
             }
-            matches.add([v["word"],def,matchData[v["word"]]]);
-            found = true;
+            //Guess type:
+            int guessedType = 0;
+            if(def.contains("<b>")){
+              guessedType = 2;
+            }else{
+              guessedType = 1;
+            }
+            if(guessedType == 0 || moreData[v["word"]] == 0 || guessedType == moreData[v["word"]]){
+              matches.add([v["word"],def,matchData[v["word"]], word, guessedType]);
+              found = true;
+            }
+            
           }
         }
         
         if(!found){
-          wordData.add([word, "No data", []]);
+          wordData.add([word, "No data", [], word, 0]);
         }else{
           if(matches.length == 1){
             wordData.add(matches[0]);

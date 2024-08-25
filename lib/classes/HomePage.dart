@@ -82,30 +82,32 @@ class HomePageState extends State<HomePage> {
     for(int i = 0; i < wordData.length; i++) {
       var picked = wordData[i];
       var isAmbiguous= false;
-      if(picked[0] is List){
-        int num = -1;
-        if(BgScripts.picked[i] != null){
-          num = BgScripts.picked[i]!;
-          if(num >= picked.length){
-            BgScripts.picked.removeWhere((key, value) => key == i);
-          }else{
-            picked = picked[BgScripts.picked[i]!];
-            isAmbiguous = true;
+      if(picked.isNotEmpty){
+        if(picked[0] is List){
+          int num = -1;
+          if(BgScripts.picked[i] != null){
+            num = BgScripts.picked[i]!;
+            if(num >= picked.length){
+              BgScripts.picked.removeWhere((key, value) => key == i);
+            }else{
+              picked = picked[BgScripts.picked[i]!];
+              isAmbiguous = true;
+            }
+          }
+          if(BgScripts.picked[i] == null){
+            wordDef.add(
+              WordChooser(words: picked, index: i, home: this)
+            );
+            continue;
           }
         }
-        if(BgScripts.picked[i] == null){
-          wordDef.add(
-            WordChooser(words: picked, index: i, home: this)
-          );
-          continue;
-        }
-      }
-      var word = picked[0];
-      var def = picked[1];
+        var word = picked[0];
+        var def = picked[1];
 
-      wordDef.add(
-        WordDefCard(word: word, def: def, data: picked[2], isAmbigous: isAmbiguous, index: i, home: this),
-      );
+        wordDef.add(
+          WordDefCard(word: word, def: def, data: picked[2], isAmbigous: isAmbiguous, index: i, home: this, fullData: picked,),
+        );
+      }
       
     }
     //double screenHeight = MediaQuery.of(context).size.height;
