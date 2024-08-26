@@ -24,7 +24,7 @@ class Translator{
 
 
   List<List> _possibilityScanner(List thing, List<List> possibilities, List prev){
-    if(thing.length != 1){
+    if(thing.length != 1 && thing.isNotEmpty){
       if(!BgScripts.listContains(possibilities,thing)){
         String wordy = thing[thing.length-1];
         bool inList = false;
@@ -70,20 +70,32 @@ class Translator{
 
   List getAllPossibilities(String word, List prev){
     List<List> possibilities = [];
+    bool isVerb = false;
+    for(int i = 0; i < prev.length; i++){
+      if(prev[i][0] == "Verb"){
+        isVerb = true;
+        break;
+      }
+    }
+    List thing = [];
+    if(!isVerb){
+      thing = Stemmer.prefixes(word);
+      possibilities = _possibilityScanner(thing,possibilities,prev);
+    }
     
-    List thing = Stemmer.prefixes(word);
+    thing = Stemmer.suffixes(word,false);
     possibilities = _possibilityScanner(thing,possibilities,prev);
-    thing = Stemmer.suffixes(word);
+    thing = Stemmer.suffixes(word,true);
     possibilities = _possibilityScanner(thing,possibilities,prev);
-    
-    thing = Stemmer.wordTense(word);
-    if(thing.isNotEmpty){
-      if(prev.isEmpty){
+    if(!isVerb){
+      thing = Stemmer.wordTense(word);
+      if(thing.isNotEmpty){
         for(int i = 0; i < thing.length; i++){
-          possibilities.add([thing[i]] + [thing[i][2]]);
+          possibilities.add([thing[i]]+ prev + [thing[i][2]]);
         }
       }
     }
+    
     for(int i = 0; i < possibilities.length; i++){
       int end = possibilities[i].length - 1;
       List thingy = getAllPossibilities(possibilities[i][end],possibilities[i].sublist(0,end));
@@ -144,10 +156,12 @@ class Translator{
           String newSearch = zz[j][zz[j].length-1];
           if(!searches.contains(newSearch)){
             bool notGoofy = true;
+            int count = 0;
             for(int k = 0; k < zz[j].length-1; k++){
               String type = zz[j][k][0];
               if(type == "Verb"){
-                if(k != 0){
+                count += 1;
+                if(count > 1){
                   notGoofy = false;
                   break;
                 }
@@ -160,6 +174,7 @@ class Translator{
           }
         }
         print(searches);
+        print(matchData);
         List matches =[];
 
         // 0 = Ambiguous, 1 = ism, 2 = fel, 3 = harf 
@@ -171,7 +186,7 @@ class Translator{
           List parse = item.value;
           for(int i = 0; i < parse.length; i++){
             //Ism
-            if(Stemmer.typeData[parse[i][0]] == "prefix" || Stemmer.typeData[parse[i][0]] == "suffix"){
+            if(Stemmer.typeData[parse[i][0]] == "prefix"){
               wordType = 1;
               //probableWord = 1;
             }

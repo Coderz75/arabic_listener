@@ -47,18 +47,35 @@ class Stemmer{
     return _stemming(stemData["prefixes"]["regex"], stemData["prefixes"], word);
   }
 
-  static List<dynamic> suffixes(String word){
-    List thing1 = _stemming(stemData["suffixes"]["regex"], stemData["suffixes"], word);
-    List thing2 = _stemming(stemData["suffixes2"]["regex"], stemData["suffixes2"], word);
-    if(thing1[0] == word){
-      thing1.clear();
-    }
-    for(dynamic x in thing2){
-      if(!thing1.contains(x)){
-        thing1.add(x);
+  static List<dynamic> suffixes(String word, [bool isVerb = false]){
+    if(!isVerb){
+      List thing1 = _stemming(stemData["suffixes"]["regex"], stemData["suffixes"], word);
+      List thing2 = _stemming(stemData["suffixes2"]["regex"], stemData["suffixes2"], word);
+
+      if(thing1[0] == word){
+        thing1.clear();
       }
+      for(int i = 0; i < thing1.length; i++){
+        if(thing1[i][2].isEmpty){
+          thing1.removeAt(i);
+          i--;
+        }
+      }
+      for(dynamic x in thing2){
+        if(x.isNotEmpty){
+          if(!thing1.contains(x)){
+            if(x == word ||(x is List<dynamic> && x[2].isNotEmpty)){
+              thing1.add(x);
+            }
+          }
+        }
+      }
+      return thing1;
+    }else{
+      List thing1 = _stemming(stemData["verbSuffix"]["regex"], stemData["verbSuffix"], word);
+      return thing1;
     }
-    return thing1;
+    
   }
 
   static List<dynamic> wordTense(String word){
@@ -189,24 +206,41 @@ class Stemmer{
       "type": "suffix",
       "regex": "^(.*)(&)",
       "matches": [1],
-      "length": 5,
+      "length": 4,
       "items": {
         "ون": "Masculine plural",
         "ان": "Masculine Dual",
         "ين": "Masculine plural",
-        "تن": "idk",
-        "كم": ["Your (posession)", "You (object)"],
-        "هن": ["Their (posession)", "They (subject)"],
-        "نا": ["Our (posession)", "We (subject)"],
+        "كم": "Your (posession)",
+        "هن": "Their (posession)",
+        "نا": "Our (posession)",
         "تم": "You (subject)",
         "ات": "Feminine plural",
         //"يا": "Masculine Dual",
-        "كن": ["Your (posession)", "You (object)"],
-        "ني": "Me (object)",
+        "كن": "Your (posession)",
         //"ما": ["Your (posession)", "You (object)"],
-        "ها": ["Hers (posession)", "Her (object)"],
-        "وا": "They (past tense; subject)",
-        "هم": ["Their (posession)", "Them (object)"],
+        "ها": "Hers (posession)",
+        "هم": "Their (posession)",
+        "ي": "My (posession)",
+      }
+    },
+    "verbSuffix":{ 
+      "type": "Verb",
+      "regex": "^(.*)(&)",
+      "matches": [1],
+      "length": 4,
+      "items": {
+        "ني":"Me (object)",
+        "ك":"You (object)",
+        "ه":"Him (object)",
+        "ها":"Her (object)",
+        "كما":"You (dual) (object)",
+        "هما":"Them (dual) (object)",
+        "نا":"Us (object)",
+        "كم":"You (plural) (object)",
+        "كن":"You (plural) (f) (object)",
+        "هم":"Them (object)",
+        "هن":"Them (f) (object)",
       }
     },
     /*
