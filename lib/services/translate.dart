@@ -253,13 +253,24 @@ class Translator{
                 probables.add(i);
               }
             }
-            if(guessedI != -1){
-              BgScripts.picked[wordI] = guessedI;
-            }else{
+            if(probableWord != 0){
               if(probables.isNotEmpty){
-                BgScripts.picked[wordI] = probables[0];
+                if(probables.contains(guessedI)){
+                  BgScripts.picked[wordI] = guessedI;
+                }else{
+                  BgScripts.picked[wordI] = probables[0];
+                }
+              }else{
+                if(guessedI != -1){
+                  BgScripts.picked[wordI] = guessedI;
+                }
+              }
+            }else{
+              if(guessedI != -1){
+                BgScripts.picked[wordI] = guessedI;
               }
             }
+
 
             wordData.add(matches);
           }

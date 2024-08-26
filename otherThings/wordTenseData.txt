@@ -16,7 +16,7 @@
 ^ت(.*)(?=ون$), You (plural) are doing/will do
 ^ت(.*)(?=ين$), You are doing/will do (f)
 ^ت(.*)(?=ن$), You (plural) are doing/will do (f)
-^ا(.*), I am doing/will do
+^ا(.*), I am doing/will do , You should do
 ^ن(.*), We are doing/will do 
 ---
 ^ي(.*)(?=ا$), They (2) will never do (should be preceded by لن)
@@ -25,7 +25,7 @@
 ^ت(.*)(?=وا$), You (plural) will never do (should be preceded by لن)
 ^ت(.*)(?=ي$), You will never do (f) (should be preceded by لن)
 ---
-^لي(.*)(?=ن$), He will most certainly do , They (plural) would most certainly do 
+^لي(.*)(?=ن$), He will most certainly do , They (plural) would most certainly do , They (plural) should do (f)
 ^لي(.*)(?=ان$), They (2) will most most certainly do
 ^لت(.*)(?=ن$), She will most certainly do , You will most certainly do (m) , You (plural) will most certainly do
 ^لت(.*)(?=ان$), They (2) will most most certainly do (f) , You (2) will most certainly do
@@ -33,3 +33,17 @@
 ^لت(.*)(?=نان$), You (plural) will most certainly do (f)
 ^لا(.*)(?=ن$), I will most certainly do
 ^لن(.*)(?=ن$), We will most certainly do
+---
+^لي(.*), He should do
+^لي(.*)(?=ا$), They (2) should do
+^لي(.*)(?=وا$),  They (plural) should do
+^لت(.*), She should do
+^لت(.*)(?=ان$),  They (2) should do (f)
+--- ^لي(.*)(?=ن$), ------------
+--- ^ا(.*), --------------
+^ا(.*)(?=ا$), You (2) should do (m&f)
+^ا(.*)(?=وا$), You (plural) should do
+^ا(.*)(?=ي$), You should do (f)
+^ا(.*)(?=ن$), You (plural) should do (f)
+^لا(.*), I should do
+^لن(.*), We should do

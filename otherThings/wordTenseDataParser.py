@@ -11,7 +11,7 @@ with codecs.open(os.path.join(BASE_DIR, "wordTenseData.txt",), "r", "utf-8") as 
     output = {}
     x = []
     for line in thing:
-        if(line == "---\n"):
+        if(line.startswith("---")):
             continue
         else:
             z = line.split(", ")
