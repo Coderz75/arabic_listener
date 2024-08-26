@@ -25,6 +25,9 @@ class Translator{
 
   List<List> _possibilityScanner(List thing, List<List> possibilities, List prev){
     if(thing.length != 1 && thing.isNotEmpty){
+      if(thing[thing.length-1] is List){
+        thing.add(thing[thing.length-1][2]);
+      }
       if(!BgScripts.listContains(possibilities,thing)){
         String wordy = thing[thing.length-1];
         bool inList = false;
@@ -173,12 +176,11 @@ class Translator{
             }
           }
         }
-        print(searches);
-        print(matchData);
         List matches =[];
 
         // 0 = Ambiguous, 1 = ism, 2 = fel, 3 = harf 
-        //int probableWord = 0;
+        int probableWord = 0;
+        bool hasVerb = false;
 
         //advanced:
         for(MapEntry<String,List> item in matchData.entries){
@@ -188,14 +190,19 @@ class Translator{
             //Ism
             if(Stemmer.typeData[parse[i][0]] == "prefix"){
               wordType = 1;
-              //probableWord = 1;
+              probableWord = 1;
             }
             if(parse[i][0] == "Verb"){
               wordType = 2;
+              hasVerb = true;
             }
           }
           moreData[item.key] = wordType;
         }
+        if(hasVerb){
+          probableWord = 2;
+        }
+
         var found = false;
         for(var v in data.values) {
           if(searches.contains(v["word"])){
@@ -227,6 +234,7 @@ class Translator{
             List<double> similarity = [];
             double best = 0;
             int guessedI = -1;
+            List probables = [];
             for(int i = 0; i < matches.length; i++){
               var z = matches[i];
               var masdr = getMasdr(z[1]);
@@ -241,9 +249,16 @@ class Translator{
               }else if (similar == best){
                 guessedI = -1;
               }
+              if(moreData[z[0]] == probableWord){
+                probables.add(i);
+              }
             }
             if(guessedI != -1){
               BgScripts.picked[wordI] = guessedI;
+            }else{
+              if(probables.isNotEmpty){
+                BgScripts.picked[wordI] = probables[0];
+              }
             }
 
             wordData.add(matches);

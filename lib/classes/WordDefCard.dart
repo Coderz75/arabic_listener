@@ -52,7 +52,6 @@ class WordDefCard extends StatelessWidget {
     bool actualWordIn = false;
     TextSpan spacer = const TextSpan(text: "·", style: TextStyle(fontWeight: FontWeight.bold));
     if(data.isNotEmpty){
-      print(data[0]);
       if(data[0][0] == "Verb"){
         TextStyle style = const TextStyle(fontWeight: FontWeight.bold, color: Colors.green);
         if(data.length == 1){
@@ -65,7 +64,7 @@ class WordDefCard extends StatelessWidget {
           RegExp pattern = RegExp("^(.*)(?=$particle)", unicode: true);
           final match = pattern.firstMatch(verbText);
           verbText = match?.group(1) as String;
-          TextStyle suffixStyle = const TextStyle();
+          TextStyle suffixStyle = const TextStyle(color: Colors.yellow);
 
           text.add(TextSpan(text: verbText, style: style));
           text.add(spacer);
