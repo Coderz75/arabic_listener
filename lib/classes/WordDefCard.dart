@@ -72,9 +72,28 @@ class WordDefCard extends StatelessWidget {
           more.add(Translation(word: verbText, style: style, def: data[0][1].join(' / ')));
           more.add(Translation(word: word, style: style, def: def));
           more.add(Translation(word: particle, style: suffixStyle, def: data[1][1]));
-
         }
-        
+      }else if (data[0][0] == "verbNoun"){
+        TextStyle style = const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange);
+        if(data.length == 1){
+          text.add(TextSpan(text: fullData[3], style: style));
+          more.add(Translation(word: fullData[3], style: style, def: data[0][1]));
+          more.add(Translation(word: word, style: style, def: def));
+        }else{
+          String verbText = fullData[3];
+          String particle = data[1][0];
+          RegExp pattern = RegExp("^(.*)(?=$particle)", unicode: true);
+          final match = pattern.firstMatch(verbText);
+          verbText = match?.group(1) as String;
+          TextStyle suffixStyle = const TextStyle(color: Colors.yellow);
+
+          text.add(TextSpan(text: verbText, style: style));
+          text.add(spacer);
+          text.add(TextSpan(text: particle, style: suffixStyle));
+          more.add(Translation(word: verbText, style: style, def: data[0][1]));
+          more.add(Translation(word: word, style: style, def: def));
+          more.add(Translation(word: particle, style: suffixStyle, def: data[1][1]));
+      }
       }else{
         for(int i = 0; i < data.length; i++){
           String particle = data[i][0];

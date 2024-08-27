@@ -97,6 +97,22 @@ class Stemmer{
     return result;
   }
 
+  static List<dynamic> verbNouns(String word){
+    List<dynamic> result = [];
+    if(word.length < 4){
+      return [];
+    }
+    for(MapEntry<String, dynamic> item in verbNounsData.entries){
+      RegExp r = RegExp(item.key, unicode: true);
+      if(r.hasMatch(word)){
+        final match = r.firstMatch(word);
+        final matchedText = match?.groups(item.value[0]).join(""); 
+        result.add(["verbNoun",item.value[1],matchedText]);
+      }
+    }
+    return result;
+  }
+
   static int getWordForm(String word){
     return -1;
   }
@@ -171,7 +187,12 @@ class Stemmer{
     }
     return word;
   }
-  static Map<String,dynamic> wordTenseData = {};
+
+  static Map<String, dynamic> verbNounsData = { // Verb nouns for only the 3 letter roots
+    "(.)ا(..)\$": [[1,2], "Active Noun - The one doing the action"],
+    "(.)ا(..)ة\$": [[1,2], "Active Noun - The one doing the action (f)"],
+  };
+  static Map<String,dynamic> wordTenseData = {}; // Fills baed on wordTense.json
 
   static Map<String,String> typeData = {}; // Automatically fills via stemdata during initilization (view bg.dart)
   static Map<String,dynamic> stemData = {

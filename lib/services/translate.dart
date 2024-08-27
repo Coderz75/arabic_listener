@@ -97,6 +97,12 @@ class Translator{
           possibilities.add([thing[i]]+ prev + [thing[i][2]]);
         }
       }
+      thing = Stemmer.verbNouns(word);
+      if(thing.isNotEmpty){
+        for(int i = 0; i < thing.length; i++){
+          possibilities.add([thing[i]]+ prev + [thing[i][2]]);
+        }
+      }
     }
     
     for(int i = 0; i < possibilities.length; i++){
@@ -178,7 +184,7 @@ class Translator{
         }
         List matches =[];
 
-        // 0 = Ambiguous, 1 = ism, 2 = fel, 3 = harf 
+        // 0 = Ambiguous, 1 = ism, 2 = fel/verbNoun, 3 = harf 
         int probableWord = 0;
         bool hasVerb = false;
 
@@ -195,6 +201,10 @@ class Translator{
             if(parse[i][0] == "Verb"){
               wordType = 2;
               hasVerb = true;
+            }
+            if(parse[i][0] == "verbNoun"){
+              wordType = 2;
+              probableWord = 2;
             }
           }
           moreData[item.key] = wordType;
