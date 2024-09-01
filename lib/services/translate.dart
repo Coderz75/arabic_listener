@@ -105,7 +105,6 @@ class Translator{
           possibilities.add(prev + [thing[i]] + [thing[i][2]]);
         }
       }
-    }else{
       thing = Stemmer.verbNouns(word);
       if(thing.isNotEmpty){
         for(int i = 0; i < thing.length; i++){
