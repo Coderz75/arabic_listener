@@ -16,8 +16,11 @@ class Translator{
     Stemmer.wordTenseData = await json.decode(response) ;
   }
   String getMasdr(String x){
-    String thing = x.split(" ")[1];
-    return thing;
+    if(x.split(" ").length > 1){
+      String thing = x.split(" ")[1];
+      return thing;
+    }
+    return "";
   }
 
   String oldInput = "";
@@ -238,9 +241,9 @@ class Translator{
         List matches =[];
 
         // 0 = Ambiguous, 1 = ism, 2 = fel/verbNoun, 3 = harf 
-        int probableWord = 0;
+        double probableWord = 0;
         bool hasVerb = false;
-
+        bool hasVerbNoun = false;
         //advanced:
         for(MapEntry<String,List> item in matchData.entries){
           double wordType = 0;
@@ -260,7 +263,8 @@ class Translator{
               }
               if(parse[i][j][0] == "verbNoun"){
                 wordType = 2.1;
-                probableWord = 2;
+                probableWord = 2.1;
+                hasVerbNoun = true;
               }
             }
             moreData[item.key]!.add(wordType);
@@ -268,6 +272,9 @@ class Translator{
         }
         if(hasVerb){
           probableWord = 2;
+        }
+        if(hasVerbNoun){
+          probableWord = 2.1;
         }
 
         var found = false;
@@ -287,9 +294,13 @@ class Translator{
             for(int i = 0; i < matchData[v["word"]]!.length; i++){
               dynamic mData = matchData[v["word"]]![i];
               dynamic gData = moreData[v["word"]]![i];
+              String newDef = def;
+              if(gData == 2.1){
+                newDef = newDef.split(RegExp(r"<b>(.*)</b>"))[0];
+              }
               if(guessedType == 0 || gData == 0 || guessedType == gData.round()){
                 double actualgData = max(guessedType.toDouble(), gData);
-                matches.add([v["word"],def,mData, word, actualgData]);
+                matches.add([v["word"],newDef,mData, word, actualgData]);
                 found = true;
               }
             }
@@ -327,7 +338,7 @@ class Translator{
               }else if (similar == best){
                 guessedI = -1;
               }
-              if(moreData[z[0]]![lastIndex].round() == probableWord){
+              if(moreData[z[0]]![lastIndex].round() == probableWord.round()){
                 probables.add(i);
               }
             }

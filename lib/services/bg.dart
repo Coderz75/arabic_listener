@@ -4,6 +4,7 @@ import '../services/stemmer.dart';
 class BgScripts{
   static Map<int,int> picked={};
   static List verbDataOrder = [];
+  static List verbNounDataOrder = [];
   static Function deepEq = const DeepCollectionEquality().equals;
   
   static void init(){
@@ -23,6 +24,18 @@ class BgScripts{
       verbSuffixes.add(group.key);
     }
     verbDataOrder.add(verbSuffixes);
+
+    List prefixes = [];
+    for (MapEntry<String, dynamic> group in Stemmer.stemData["prefixes"]["items"].entries) {
+      prefixes.add(group.key);
+    }
+    verbNounDataOrder.add(prefixes);
+    verbNounDataOrder.add("verbNoun");
+    List suffixes = [];
+    for (MapEntry<String, dynamic> group in Stemmer.stemData["suffixes"]["items"].entries) {
+      suffixes.add(group.key);
+    }
+    verbNounDataOrder.add(verbSuffixes);
   }
   
   static void picker(int x, int y){

@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import '../services/bg.dart';
 import '../classes/HomePage.dart';
 
-
-//TODO: Fix Visual thing where the card looks like its goofy
+//ignore: must_be_immutable
 class WordDefCard extends StatelessWidget {
-  const WordDefCard({
+  WordDefCard({
     super.key,
     required this.word,
     required this.def,
@@ -24,6 +23,61 @@ class WordDefCard extends StatelessWidget {
   final int index;
   final HomePageState home;
   final List fullData;
+  List<TextSpan> _text = [];
+  List<Widget> _more = [];
+
+  void addText(String type, List ordering, TextStyle mainStyle){
+    TextSpan spacer = const TextSpan(text: "·", style: TextStyle(fontWeight: FontWeight.bold));
+    //parsing order
+    List parsedData = BgScripts.deepCopy(data);
+    parsedData.add([type,def,word]);
+    parsedData.sort((a, b) {
+      int aIndex = 1;
+      int bIndex = 1;
+      for(int j = 0; j < ordering.length; j++){
+        if(ordering[j].contains(a[0])){
+          aIndex = j;
+        }
+        if(ordering[j].contains(b[0])){
+          bIndex = j;
+        }
+      }
+      return aIndex.compareTo(bIndex);
+    });
+    int daIndex = parsedData.length - 1;
+    String verbText = parsedData[daIndex][parsedData[daIndex].length - 1];
+    bool reachedDaVerb = false;
+    for(int i = 0; i < parsedData.length; i++){
+      String particle = parsedData[i][0];
+      dynamic pDef = parsedData[i][1];
+      if(particle == type){
+        particle = word;
+      }
+      if(pDef is List){
+        pDef = pDef.join(" / ");
+      }
+      TextStyle style = const TextStyle();
+      if(particle == word){
+        style = mainStyle;
+      }else{
+        style = const TextStyle(color: Colors.yellow);
+      }
+      String daText = particle;
+      if(particle == word){
+        daText = verbText;
+      }
+      if(!reachedDaVerb || particle != word){
+        _text.add(TextSpan(text: daText, style: style));
+        _text.add(spacer);
+      }
+      _more.add(Translation(word: daText, style: style, def: pDef));
+      if(particle == word){
+        reachedDaVerb = true;
+      }
+    }
+    _text.removeLast();
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Widget> topRow = [
@@ -47,137 +101,23 @@ class WordDefCard extends StatelessWidget {
     if(!isAmbigous){
       (topRow[0] as Row).children.removeAt(0);
     }
-    List<TextSpan> text = [];
-    List<Widget> more = [];
     bool actualWordIn = false;
     TextSpan spacer = const TextSpan(text: "·", style: TextStyle(fontWeight: FontWeight.bold));
+    _text.clear();
+    _more.clear();
     if(data.isNotEmpty){
       if(fullData[4] == 2){
-        
-        List parsedData = [];
-        //parsing order
-        for(int i = 0; i < data.length; i++){
-          parsedData.add(data[i]);
-        }
-        parsedData.add(["Verb",def,word]);
-        parsedData.sort((a, b) {
-          int aIndex = 0;
-          int bIndex = 0;
-          for(int j = 0; j < BgScripts.verbDataOrder.length; j++){
-            if(BgScripts.verbDataOrder[j].contains(a[0])){
-              aIndex = j;
-            }
-            if(BgScripts.verbDataOrder[j].contains(b[0])){
-              bIndex = j;
-            }
-          }
-          return aIndex.compareTo(bIndex);
-        });
-        int daIndex = parsedData.length - 1;
-        String verbText = parsedData[daIndex][parsedData[daIndex].length - 1];
-        bool reachedDaVerb = false;
-        for(int i = 0; i < parsedData.length; i++){
-          String particle = parsedData[i][0];
-          dynamic pDef = parsedData[i][1];
-          if(particle == "Verb"){
-            particle = word;
-          }
-          if(pDef is List){
-            pDef = pDef.join(" / ");
-          }
-          TextStyle style = const TextStyle();
-          if(particle == word){
-            style = const TextStyle(fontWeight: FontWeight.bold, color: Colors.green);
-          }else{
-            style = const TextStyle(color: Colors.yellow);
-          }
-          String daText = particle;
-          if(particle == word){
-            daText = verbText;
-          }
-          if(!reachedDaVerb || particle != word){
-            text.add(TextSpan(text: daText, style: style));
-            text.add(spacer);
-          }
-          more.add(Translation(word: daText, style: style, def: pDef));
-          if(particle == word){
-            reachedDaVerb = true;
-          }
-        }
-        text.removeLast();
+        addText("Verb",BgScripts.verbDataOrder,const TextStyle(fontWeight: FontWeight.bold, color: Colors.green));
       }else if (fullData[4] == 2.1){
-        TextStyle style = const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange);
-        if(data.length == 1){
-          text.add(TextSpan(text: fullData[3], style: style));
-          more.add(Translation(word: fullData[3], style: style, def: data[0][1]));
-          more.add(Translation(word: word, style: style, def: def));
-        }else{
-          String verbText = fullData[3];
-          String particle = data[1][0];
-          RegExp pattern = RegExp("^(.*)(?=$particle)", unicode: true);
-          final match = pattern.firstMatch(verbText);
-          verbText = match?.group(1) as String;
-          TextStyle suffixStyle = const TextStyle(color: Colors.yellow);
-
-          text.add(TextSpan(text: verbText, style: style));
-          text.add(spacer);
-          text.add(TextSpan(text: particle, style: suffixStyle));
-          more.add(Translation(word: verbText, style: style, def: data[0][1]));
-          more.add(Translation(word: word, style: style, def: def));
-          more.add(Translation(word: particle, style: suffixStyle, def: data[1][1]));
-      }
+        addText("verbNoun",BgScripts.verbNounDataOrder,const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange));
       }else{
-        for(int i = 0; i < data.length; i++){
-          String particle = data[i][0];
-          String trans = "";
-          String type = "";
-          if(particle != "Verb"){
-            type =Stemmer.typeData[particle] as String;
-            trans = data[i][1];
-          }
-          TextStyle style = const TextStyle();
-          if(type == "suffix"){
-            if(!actualWordIn){
-              actualWordIn = true;
-              style =const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue);
-              text.add(TextSpan(text: word, style: style));
-              text.add(spacer);
-              more.add(Translation(word: word, style: style, def: def));
-            }
-            style = const TextStyle();
-          }
-          else if(type == "suffix"){
-            style = const TextStyle();
-          }
-          else if(type == "Verb"){
-            if(!actualWordIn){
-              actualWordIn = true;
-              style =const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue);
-              text.add(TextSpan(text: word, style: style));
-              text.add(spacer);
-              more.add(Translation(word: word, style: style, def: def));
-            }
-            style = const TextStyle();
-          }
-          text.add(TextSpan(text: particle, style: style));
-          text.add(spacer);
-          more.add(Translation(word: particle, style: style, def: trans));
-        }
-        if(!actualWordIn){
-          actualWordIn = true;
-          TextStyle style =const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue);
-          text.add(TextSpan(text: word, style: style));
-          text.add(spacer);
-          more.add(Translation(word: word, style: style, def: def));
-        }
-        text.removeLast();
+        addText("Noun",BgScripts.verbNounDataOrder,const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue));
       }
-      
-      topRow.add(Text(fullData[3]));
     }else{
-      text.add(TextSpan(text: word, style: const TextStyle()));
-      more.add(Translation(word: word, style: const TextStyle(), def: def));
+      _text.add(TextSpan(text: word, style: const TextStyle()));
+      _more.add(Translation(word: word, style: const TextStyle(), def: def));
     }
+    topRow.add(Text(fullData[3]));
 
     return Card(
       child: Padding(
@@ -196,11 +136,11 @@ class WordDefCard extends StatelessWidget {
                   style:  const TextStyle(
                     fontSize: 20.0,
                   ),
-                  children: text,
+                  children: _text,
                 ),
               ),
             ),
-          ] + more,
+          ] + _more,
         ),
       ),
     );

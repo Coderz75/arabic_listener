@@ -217,7 +217,7 @@ class Stemmer{
       "type": "suffix",
       "regex": r"^(.*)(?=&$)",
       "matches": [1],
-      "length": 6,
+      "length": 5,
       "items": {
         "كما": "You (dual)",
         "تان": "Dual (feminine)",
@@ -230,7 +230,7 @@ class Stemmer{
       "type": "suffix",
       "regex": r"^(.*)(?=&$)",
       "matches": [1],
-      "length": 4,
+      "length": 3,
       "items": {
         "ون": "Masculine plural",
         "ان": "Masculine Dual",
