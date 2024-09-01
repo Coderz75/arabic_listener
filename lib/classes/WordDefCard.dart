@@ -1,4 +1,3 @@
-import '../services/stemmer.dart';
 import 'package:flutter/material.dart';
 import '../services/bg.dart';
 import '../classes/HomePage.dart';
@@ -23,8 +22,8 @@ class WordDefCard extends StatelessWidget {
   final int index;
   final HomePageState home;
   final List fullData;
-  List<TextSpan> _text = [];
-  List<Widget> _more = [];
+  List<TextSpan> _text =[];
+  List<Widget> _more=[];
 
   void addText(String type, List ordering, TextStyle mainStyle){
     TextSpan spacer = const TextSpan(text: "·", style: TextStyle(fontWeight: FontWeight.bold));
@@ -80,6 +79,8 @@ class WordDefCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _text = [];
+    _more = [];
     List<Widget> topRow = [
                 Row(
                   children: [
@@ -101,8 +102,6 @@ class WordDefCard extends StatelessWidget {
     if(!isAmbigous){
       (topRow[0] as Row).children.removeAt(0);
     }
-    bool actualWordIn = false;
-    TextSpan spacer = const TextSpan(text: "·", style: TextStyle(fontWeight: FontWeight.bold));
     _text.clear();
     _more.clear();
     if(data.isNotEmpty){
