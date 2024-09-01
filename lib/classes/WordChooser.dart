@@ -26,7 +26,7 @@ class WordChooser extends StatelessWidget {
           child: Column(
             children: [
               Text(z[6]),
-              z[4] == 0 ? const Text("A") : (z[4] == 1 ? const Text("N") : const Text("V")),
+              z[4] == 0 ? const Text("A") : (z[4] == 1 || z[4] == 2.1 ? const Text("N") : const Text("V")),
             ],
           ),
         )
