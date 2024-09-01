@@ -1,5 +1,5 @@
 import 'package:arabic_listener/services/bg.dart';
-
+import 'dart:math';
 import 'stemmer.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
@@ -24,19 +24,13 @@ class Translator{
 
 
   List<List> _possibilityScanner(List thing, List<List> possibilities, List prev){
+    prev = BgScripts.deepCopy(prev);
     if(thing.length != 1 && thing.isNotEmpty){
       if(thing[thing.length-1] is List){
         thing.add(thing[thing.length-1][2]);
       }
       if(!BgScripts.listContains(possibilities,thing)){
-        String wordy = thing[thing.length-1];
         bool inList = false;
-        for(int j = 0; j < possibilities.length; j++){
-          if(possibilities[j][possibilities[j].length-1] == wordy){
-            inList = true;
-            break;
-          }
-        }
         if(!inList){
           possibilities.add(prev + thing);
         }
@@ -53,16 +47,9 @@ class Translator{
         }
         thingity.add(thing[i][thing[i].length-1]);
         if(!BgScripts.listContains(possibilities,thingity)){
-          String wordy = thingity[thingity.length-1];
           bool inList = false;
-          for(int j = 0; j < possibilities.length; j++){
-            if(possibilities[j][possibilities[j].length-1] == wordy){
-              inList = true;
-              break;
-            }
-          }
           if(!inList){
-            possibilities.add(prev + thingity);
+            possibilities.add(thingity);
           }
           
         }
@@ -72,35 +59,53 @@ class Translator{
   }
 
   List getAllPossibilities(String word, List prev){
+
     List<List> possibilities = [];
     bool isVerb = false;
+    bool mustBeNotVerb = false;
     for(int i = 0; i < prev.length; i++){
       if(prev[i][0] == "Verb"){
         isVerb = true;
         break;
+      }else{
+        for (MapEntry<String, dynamic> item in Stemmer.stemData["prefixes"]["items"].entries) {
+          if(prev[i][1] == item.value) {
+            mustBeNotVerb = true;
+            break;
+          }
+        }
+        for (MapEntry<String, dynamic> item in Stemmer.stemData["suffixes"]["items"].entries) {
+          if(prev[i][1] == item.value) {
+            mustBeNotVerb = true;
+            break;
+          }
+        }
       }
+      
     }
     List thing = [];
-    if(!isVerb){
-      thing = Stemmer.prefixes(word);
+    thing = Stemmer.prefixes(word, isVerb);
+    possibilities = _possibilityScanner(thing,possibilities,prev);
+    thing = Stemmer.suffixes(word,isVerb);
+    possibilities = _possibilityScanner(thing,possibilities,prev);
+    if(!isVerb && !mustBeNotVerb){
+      thing = Stemmer.prefixes(word,true);
+      possibilities = _possibilityScanner(thing,possibilities,prev);
+      thing = Stemmer.suffixes(word,true);
       possibilities = _possibilityScanner(thing,possibilities,prev);
     }
-    
-    thing = Stemmer.suffixes(word,false);
-    possibilities = _possibilityScanner(thing,possibilities,prev);
-    thing = Stemmer.suffixes(word,true);
-    possibilities = _possibilityScanner(thing,possibilities,prev);
-    if(!isVerb){
+
+    if(!isVerb && !mustBeNotVerb){
       thing = Stemmer.wordTense(word);
       if(thing.isNotEmpty){
         for(int i = 0; i < thing.length; i++){
-          possibilities.add([thing[i]]+ prev + [thing[i][2]]);
+          possibilities.add(prev + [thing[i]] + [thing[i][2]]);
         }
       }
       thing = Stemmer.verbNouns(word);
       if(thing.isNotEmpty){
         for(int i = 0; i < thing.length; i++){
-          possibilities.add([thing[i]]+ prev + [thing[i][2]]);
+          possibilities.add(prev + [thing[i]] + [thing[i][2]]);
         }
       }
     }
@@ -110,32 +115,28 @@ class Translator{
       List thingy = getAllPossibilities(possibilities[i][end],possibilities[i].sublist(0,end));
       for(int x = 0; x < thingy.length; x++){
         if(!BgScripts.listContains(possibilities,thingy[x])){
-          String wordy = thingy[x][thingy[x].length-1];
           bool inList = false;
-          for(int j = 0; j < possibilities.length; j++){
-            if(possibilities[j][possibilities[j].length-1] == wordy){
-              inList = true;
-              break;
-            }
-          }
           if(!inList){
-            possibilities.add(thingy[x]);
+            List finalList = [];
+            
+            finalList = BgScripts.deepCopy(thingy[x]);
+            possibilities.add(finalList);
           }
-          
         }
       }
     }
-    if(!BgScripts.listContains(possibilities,[word])){
+    if(!BgScripts.listContains(possibilities,[word]) && prev.isEmpty){
       possibilities.add([word]);
     }
     String hyperStemmed = Stemmer.wordStemmer(word);
-    if(!BgScripts.listContains(possibilities,[hyperStemmed])){
+    if(!BgScripts.listContains(possibilities,[hyperStemmed]) && prev.isEmpty){
       possibilities.add([hyperStemmed]);
     }
     return possibilities;
   }
 
   List translate(String input){
+    
     List wordData =[];
     Map<int,int> newPicks = {};
     List inputList = input.split(' ');
@@ -158,30 +159,82 @@ class Translator{
       String word = inputList[wordI];
       if(word.isNotEmpty){
         List searches = [];
-        Map<String,List> matchData ={};
-        Map<String,int> moreData = {};
+        Map<String,List<dynamic>> matchData ={};
+        Map<String,List<double>> moreData = {};
         List zz = getAllPossibilities(word, []);
         for(int j = 0; j < zz.length; j++){
           String newSearch = zz[j][zz[j].length-1];
-          if(!searches.contains(newSearch)){
-            bool notGoofy = true;
-            int count = 0;
-            for(int k = 0; k < zz[j].length-1; k++){
-              String type = zz[j][k][0];
-              if(type == "Verb"){
-                count += 1;
-                if(count > 1){
-                  notGoofy = false;
-                  break;
+          List daSublist = zz[j].sublist(0,zz[j].length-1);
+          if(!matchData.containsKey(newSearch)){
+            matchData[newSearch] = [];
+          }else{
+            if(matchData[newSearch]![0].isEmpty){
+              matchData[newSearch]!.removeAt(0);
+            }
+          }
+          bool notGoofy = true;
+          if(daSublist.isNotEmpty){
+            if(daSublist[daSublist.length-1][2] != newSearch){
+              notGoofy = false;
+            }
+          }
+
+          
+          int count = 0;
+          for(int k = 0; k < zz[j].length-1; k++){
+            String type = zz[j][k][0];
+            if(type == "Verb"){
+              count += 1;
+              if(count > 1){
+                notGoofy = false;
+                break;
+              }
+            }
+          }
+          //check similar ambigous terms
+          List<String> scanned = [];
+          for(int k = 0; k < daSublist.length; k++){
+            if(daSublist[k][1] is List){
+              scanned.add(daSublist[k][1].join("/"));
+            }else{
+              scanned.add(daSublist[k][1]);
+            }
+          }
+          scanned.sort();
+          for(int k = 0; k < matchData[newSearch]!.length; k++){
+            List otherScanned = [];
+            for(int l = 0; l < matchData[newSearch]![k].length; l++){
+              if(matchData[newSearch]![k][l][1] is List){
+                otherScanned.add(matchData[newSearch]![k][l][1].join("/"));
+              }else{
+                otherScanned.add(matchData[newSearch]![k][l][1]);
+              }
+            }
+            otherScanned.sort();
+            if(BgScripts.deepEq(scanned,otherScanned)){
+              notGoofy = false;
+              break;
+            }
+          }
+
+          if(notGoofy){
+            if( matchData[newSearch]!.isEmpty || (daSublist.isNotEmpty)){
+              searches.add(newSearch);
+              matchData[newSearch]!.add(daSublist);
+              if(daSublist.isNotEmpty){
+                for(int k = 0; k < matchData[newSearch]!.length; k++){
+                  if(matchData[newSearch]![k].isEmpty){
+                    matchData[newSearch]!.removeAt(k);
+                    k--;
+                  }
                 }
               }
             }
-            if(notGoofy){
-              searches.add(newSearch);
-              matchData[newSearch] = zz[j].sublist(0,zz[j].length-1);  
-            }
+           
           }
+          
         }
+        print(matchData);
         List matches =[];
 
         // 0 = Ambiguous, 1 = ism, 2 = fel/verbNoun, 3 = harf 
@@ -190,24 +243,28 @@ class Translator{
 
         //advanced:
         for(MapEntry<String,List> item in matchData.entries){
-          int wordType = 0;
+          double wordType = 0;
           List parse = item.value;
-          for(int i = 0; i < parse.length; i++){
-            //Ism
-            if(Stemmer.typeData[parse[i][0]] == "prefix"){
-              wordType = 1;
-              probableWord = 1;
+          moreData[item.key] = [];
+          for(int i = 0; i < parse.length; i++){        
+            for(int j = 0; j < parse[i].length; j++){
+              wordType = 0;
+              //Ism
+              if(Stemmer.typeData[parse[i][j][0]] == "prefix"){
+                wordType = 1;
+                probableWord = 1;
+              }
+              if(parse[i][j][0] == "Verb"){
+                wordType = 2;
+                hasVerb = true;
+              }
+              if(parse[i][j][0] == "verbNoun"){
+                wordType = 2.1;
+                probableWord = 2;
+              }
             }
-            if(parse[i][0] == "Verb"){
-              wordType = 2;
-              hasVerb = true;
-            }
-            if(parse[i][0] == "verbNoun"){
-              wordType = 2;
-              probableWord = 2;
-            }
+            moreData[item.key]!.add(wordType);
           }
-          moreData[item.key] = wordType;
         }
         if(hasVerb){
           probableWord = 2;
@@ -227,11 +284,15 @@ class Translator{
             }else{
               guessedType = 1;
             }
-            if(guessedType == 0 || moreData[v["word"]] == 0 || guessedType == moreData[v["word"]]){
-              matches.add([v["word"],def,matchData[v["word"]], word, guessedType]);
-              found = true;
+            for(int i = 0; i < matchData[v["word"]]!.length; i++){
+              dynamic mData = matchData[v["word"]]![i];
+              dynamic gData = moreData[v["word"]]![i];
+              if(guessedType == 0 || gData == 0 || guessedType == gData.round()){
+                double actualgData = max(guessedType.toDouble(), gData);
+                matches.add([v["word"],def,mData, word, actualgData]);
+                found = true;
+              }
             }
-            
           }
         }
         
@@ -245,8 +306,15 @@ class Translator{
             double best = 0;
             int guessedI = -1;
             List probables = [];
+            String lastWord = "";
+            int lastIndex = 0;
             for(int i = 0; i < matches.length; i++){
               var z = matches[i];
+              if(z[0] == lastWord){
+                lastIndex++;
+              }else{
+                lastIndex = 0;
+              }
               var masdr = getMasdr(z[1]);
               var wordHarakat = getHarakat(word, masdr);
               matches[i].add(masdr);
@@ -259,7 +327,7 @@ class Translator{
               }else if (similar == best){
                 guessedI = -1;
               }
-              if(moreData[z[0]] == probableWord){
+              if(moreData[z[0]]![lastIndex].round() == probableWord){
                 probables.add(i);
               }
             }

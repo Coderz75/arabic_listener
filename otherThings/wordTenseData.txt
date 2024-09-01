@@ -8,6 +8,7 @@
 ^(.*)(?=تن$), You (plural) did (f)
 ^(.*)(?=نا$), We did
 ---
+^ي(.*), He is doing/will do
 ^ي(.*)(?=ان$), They (2) are doing/will do 
 ^ي(.*)(?=ون$), They (plural) are doing/will do
 ^ت(.*), She is doing/will do , You are doing/ will do (m)

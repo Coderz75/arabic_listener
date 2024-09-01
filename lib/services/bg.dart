@@ -3,6 +3,7 @@ import '../services/stemmer.dart';
 
 class BgScripts{
   static Map<int,int> picked={};
+  static List verbDataOrder = [];
   static Function deepEq = const DeepCollectionEquality().equals;
   
   static void init(){
@@ -11,6 +12,17 @@ class BgScripts{
         Stemmer.typeData[item.key] = group.value["type"];
       }
     }
+    List verbPrefixes = [];
+    for (MapEntry<String, dynamic> group in Stemmer.stemData["verbPrefix"]["items"].entries) {
+      verbPrefixes.add(group.key);
+    }
+    verbDataOrder.add(verbPrefixes);
+    verbDataOrder.add("Verb");
+    List verbSuffixes = [];
+    for (MapEntry<String, dynamic> group in Stemmer.stemData["verbSuffix"]["items"].entries) {
+      verbSuffixes.add(group.key);
+    }
+    verbDataOrder.add(verbSuffixes);
   }
   
   static void picker(int x, int y){
@@ -37,4 +49,32 @@ class BgScripts{
     // Return the Jaccard similarity (intersection / union)
     return unionSize == 0 ? 0.0 : intersectionSize / unionSize;
   }
+  static bool listsAreEqual<T>(List<T> list1, List<T> list2) {
+    if (list1.length != list2.length) {
+      return false;
+    }
+
+    for (int i = 0; i < list1.length; i++) {
+      if (list1[i] is List && list2[i] is List) {
+        if (!listsAreEqual(list1[i] as List<T>, list2[i] as List<T>)) {
+          return false;
+        }
+      } else if (list1[i] != list2[i]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+  // Function to create a deep copy of a list
+  static List<dynamic> deepCopy(List<dynamic> list) {
+    return list.map((item) {
+      if (item is List) {
+        return deepCopy(item);
+      } else {
+        return item;
+      }
+    }).toList();
+  }
+
 }

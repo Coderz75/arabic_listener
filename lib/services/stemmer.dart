@@ -43,7 +43,10 @@ class Stemmer{
     return result;
   }
 
-  static List<dynamic> prefixes(String word){
+  static List<dynamic> prefixes(String word, [bool isVerb = false]){
+    if(isVerb){
+      return _stemming(stemData["verbPrefix"]["regex"], stemData["verbPrefix"], word);
+    }
     return _stemming(stemData["prefixes"]["regex"], stemData["prefixes"], word);
   }
 
@@ -212,7 +215,7 @@ class Stemmer{
     },
     "suffixes":{
       "type": "suffix",
-      "regex": "^(.*)(&)",
+      "regex": r"^(.*)(?=&$)",
       "matches": [1],
       "length": 6,
       "items": {
@@ -225,7 +228,7 @@ class Stemmer{
     },
     "suffixes2":{ 
       "type": "suffix",
-      "regex": "^(.*)(&)",
+      "regex": r"^(.*)(?=&$)",
       "matches": [1],
       "length": 4,
       "items": {
@@ -247,7 +250,7 @@ class Stemmer{
     },
     "verbSuffix":{ 
       "type": "Verb",
-      "regex": "^(.*)(&)",
+      "regex": r"^(.*)(?=&$)",
       "matches": [1],
       "length": 4,
       "items": {
@@ -264,55 +267,15 @@ class Stemmer{
         "هن":"Them (f) (object)",
       }
     },
-    /*
-    "Specifity": {
-      "matches": [2],
+    "verbPrefix":{ 
+      "type": "Verb",
       "regex": "^(&)(.*)",
-      "length": 5,
+      "matches": [2],
+      "length": 4,
       "items": {
-        "ال": "The",
-        "لل": "For the",
+        "ف":"So",
+        "و":"And",
       }
     },
-    "Suffixes1": { //كما|تان|هما|تين|تما)
-      "matches": [1],
-      "regex": "^(.*)(&)",
-      "length": 6,
-      "items": {
-        "تان": "Dual, Feminine",
-        "هما": "Dual",
-        "تين": "Plural, Feminine",
-        "تما": "Dual"
-      }
-    },
-    "Suffixes2": { //ون|ان|ين|تن|كم|هن|نا|تم|ات|يا|كن|ني|ما|ها|وا|هم)
-      "matches": [1],
-      "regex": "^(.*)(&)",
-      "length": 5,
-      "items": {
-        "ون": "Pluran",
-        "ان": "Dual",
-        "ين": "Plural",
-        "تن": "Plural (feminine)",
-        "كم": "You all",
-        "هن": "idk",
-        "نا": "We",
-        "تم": "You (feminine)",
-        "ات": "idk",
-        "يا": "idk",
-        "كن": "idk",
-        "ني": "Me",
-        "ما": "idk",
-        "ها": "idk",
-        "وا": "idk",
-        "هم": "Their",
-      },
-    },
-    "Forms1":{
-      "length": 6,
-      "items":{
-        "^[ام]ست(...)": "",
-      }
-    },*/
   };
 }

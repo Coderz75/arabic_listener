@@ -52,28 +52,60 @@ class WordDefCard extends StatelessWidget {
     bool actualWordIn = false;
     TextSpan spacer = const TextSpan(text: "·", style: TextStyle(fontWeight: FontWeight.bold));
     if(data.isNotEmpty){
-      if(data[0][0] == "Verb"){
-        TextStyle style = const TextStyle(fontWeight: FontWeight.bold, color: Colors.green);
-        if(data.length == 1){
-          text.add(TextSpan(text: fullData[3], style: style));
-          more.add(Translation(word: fullData[3], style: style, def: data[0][1].join(' / ')));
-          more.add(Translation(word: word, style: style, def: def));
-        }else{
-          String verbText = fullData[3];
-          String particle = data[1][0];
-          RegExp pattern = RegExp("^(.*)(?=$particle)", unicode: true);
-          final match = pattern.firstMatch(verbText);
-          verbText = match?.group(1) as String;
-          TextStyle suffixStyle = const TextStyle(color: Colors.yellow);
-
-          text.add(TextSpan(text: verbText, style: style));
-          text.add(spacer);
-          text.add(TextSpan(text: particle, style: suffixStyle));
-          more.add(Translation(word: verbText, style: style, def: data[0][1].join(' / ')));
-          more.add(Translation(word: word, style: style, def: def));
-          more.add(Translation(word: particle, style: suffixStyle, def: data[1][1]));
+      if(fullData[4] == 2){
+        
+        List parsedData = [];
+        //parsing order
+        for(int i = 0; i < data.length; i++){
+          parsedData.add(data[i]);
         }
-      }else if (data[0][0] == "verbNoun"){
+        parsedData.add(["Verb",def,word]);
+        parsedData.sort((a, b) {
+          int aIndex = 0;
+          int bIndex = 0;
+          for(int j = 0; j < BgScripts.verbDataOrder.length; j++){
+            if(BgScripts.verbDataOrder[j].contains(a[0])){
+              aIndex = j;
+            }
+            if(BgScripts.verbDataOrder[j].contains(b[0])){
+              bIndex = j;
+            }
+          }
+          return aIndex.compareTo(bIndex);
+        });
+        int daIndex = parsedData.length - 1;
+        String verbText = parsedData[daIndex][parsedData[daIndex].length - 1];
+        bool reachedDaVerb = false;
+        for(int i = 0; i < parsedData.length; i++){
+          String particle = parsedData[i][0];
+          dynamic pDef = parsedData[i][1];
+          if(particle == "Verb"){
+            particle = word;
+          }
+          if(pDef is List){
+            pDef = pDef.join(" / ");
+          }
+          TextStyle style = const TextStyle();
+          if(particle == word){
+            style = const TextStyle(fontWeight: FontWeight.bold, color: Colors.green);
+          }else{
+            style = const TextStyle(color: Colors.yellow);
+          }
+          String daText = particle;
+          if(particle == word){
+            daText = verbText;
+          }
+          if(!reachedDaVerb || particle != word){
+            text.add(TextSpan(text: daText, style: style));
+            text.add(spacer);
+          }
+          more.add(Translation(word: daText, style: style, def: pDef));
+          if(particle == word){
+            reachedDaVerb = true;
+          }
+        }
+        text.removeLast();
+      }else if (fullData[4] == 2.1){
         TextStyle style = const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange);
         if(data.length == 1){
           text.add(TextSpan(text: fullData[3], style: style));
