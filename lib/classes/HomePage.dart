@@ -23,7 +23,7 @@ class HomePageState extends State<HomePage> {
   bool _speechEnabled = false;
   String _input = '';
   List wordData = [];
-  Translator translator = Translator();
+  static Translator translator = Translator();
   int inputType = 0;
   
   void reload(){
@@ -36,6 +36,23 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     BgScripts.init();
+  }
+
+  String getDataFromWord(String word){
+    String x = "";
+    bool found = false;
+    for(var v in translator.data.values) {
+      if(v["word"] == word){
+        found = true;
+        x = v["definition"];
+        break;
+      }
+    }
+    if(!found){
+      return "Unable to find word in dictionary";
+    }else{
+      return x;
+    }
   }
 
   /// Each time to start a speech recognition session

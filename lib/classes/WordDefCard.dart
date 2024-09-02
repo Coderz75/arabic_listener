@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/bg.dart';
 import '../classes/HomePage.dart';
+import 'RootInfo.dart';
 
 //ignore: must_be_immutable
 class WordDefCard extends StatelessWidget {
@@ -26,10 +27,18 @@ class WordDefCard extends StatelessWidget {
   List<Widget> _more=[];
 
   void addText(String type, List ordering, TextStyle mainStyle){
+    String usedDef = def;
+    List verbNounWithRoot = [false,null];
+    if(type == "verbNoun" && def.contains("<b>")){
+      usedDef = def.split(RegExp(r"<b>(.*)</b>"))[0];
+    }else{
+      String theRoot = data[data.length-1][2];
+      verbNounWithRoot = [true,theRoot];
+    }
     TextSpan spacer = const TextSpan(text: "·", style: TextStyle(fontWeight: FontWeight.bold));
     //parsing order
     List parsedData = BgScripts.deepCopy(data);
-    parsedData.add([type,def,word]);
+    parsedData.add([type,usedDef,word]);
     parsedData.sort((a, b) {
       int aIndex = 1;
       int bIndex = 1;
@@ -43,8 +52,8 @@ class WordDefCard extends StatelessWidget {
       }
       return aIndex.compareTo(bIndex);
     });
-    bool reachedDaVerb = false;
-    String verbText = "";
+    bool reachedDaWord = false;
+    String wordText = "";
     for(int i = 0; i < parsedData.length; i++){
       String particle = parsedData[i][0];
       dynamic pDef = parsedData[i][1];
@@ -62,23 +71,26 @@ class WordDefCard extends StatelessWidget {
       }
       String daText = particle;
       if(particle == word){
-        if(verbText == ""){
+        if(wordText == ""){
           if(parsedData[i].length > 3){
-            verbText = parsedData[i][3];
+            wordText = parsedData[i][3];
           }else{
-            verbText = word;
+            wordText = word;
           }
         }
-        daText = verbText;
+        daText = wordText;
       }
-      if(!reachedDaVerb || particle != word){
+      if(!reachedDaWord || particle != word){
         _text.add(TextSpan(text: daText, style: style));
         _text.add(spacer);
       }
       _more.add(Translation(word: daText, style: style, def: pDef));
       if(particle == word){
-        reachedDaVerb = true;
+        reachedDaWord = true;
       }
+    }
+    if(verbNounWithRoot[0]){
+      _more.add(RootInfo(verbNounWithRoot: verbNounWithRoot, home: home));
     }
     _text.removeLast();
   }
@@ -110,7 +122,6 @@ class WordDefCard extends StatelessWidget {
     }
     _text.clear();
     _more.clear();
-    print(fullData);
     if(data.isNotEmpty){
       if(fullData[4] == 2){
         addText("Verb",BgScripts.verbDataOrder,const TextStyle(fontWeight: FontWeight.bold, color: Colors.green));

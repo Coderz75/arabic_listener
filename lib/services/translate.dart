@@ -107,7 +107,7 @@ class Translator{
         }
       }
     }
-    if(!isVerb){
+    if(!isVerb && (mustBeNotVerb || prev.isEmpty)){
       thing = Stemmer.verbNouns(word);
       if(thing.isNotEmpty){
         for(int i = 0; i < thing.length; i++){
@@ -312,9 +312,6 @@ class Translator{
               dynamic mData = matchData[v["word"]]![i];
               dynamic gData = moreData[v["word"]]![i];
               String newDef = def;
-              if(gData == 2.1){
-                newDef = newDef.split(RegExp(r"<b>(.*)</b>"))[0];
-              }
               if(guessedType == 0 || gData == 0 || guessedType == gData.round()){
                 double actualgData = max(guessedType.toDouble(), gData);
                 matches.add([v["word"],newDef,mData, word, actualgData]);
@@ -336,12 +333,25 @@ class Translator{
             List probables = [];
             String lastWord = "";
             int lastIndex = 0;
+            List isVerbNoun = [false,null,null];
             for(int i = 0; i < matches.length; i++){
               var z = matches[i];
               if(z[0] == lastWord){
                 lastIndex++;
               }else{
                 lastIndex = 0;
+              }
+              if(isVerbNoun[0]){
+                if(z[0] == isVerbNoun[2]){
+                  matches[isVerbNoun[1]][1] = z[1];
+                  isVerbNoun = [false,null,null];
+                  matches.removeAt(i);
+                  i--;
+                  continue;
+                }
+              }else if(z[4] == 2.1){
+                int li = z[2].length - 1;
+                isVerbNoun = [true, i, z[2][li][z[2][li].length - 1]];
               }
               var masdr = getMasdr(z[1]);
               var wordHarakat = getHarakat(word, masdr);
