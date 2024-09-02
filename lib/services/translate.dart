@@ -157,7 +157,7 @@ class Translator{
   }
 
   List translate(String input){
-    
+    print(Stemmer.suffixes("الميروفكما"));
     List wordData =[];
     Map<int,int> newPicks = {};
     List inputList = input.split(' ');
@@ -194,13 +194,13 @@ class Translator{
             }
           }
           bool notGoofy = true;
+          //Check if wierd references
           if(daSublist.isNotEmpty){
             if(daSublist[daSublist.length-1][2] != newSearch){
               notGoofy = false;
             }
           }
-
-          
+          // Check if verb conjugations more than once
           int count = 0;
           for(int k = 0; k < zz[j].length-1; k++){
             String type = zz[j][k][0];
@@ -237,7 +237,6 @@ class Translator{
               break;
             }
           }
-
           if(notGoofy){
             if( matchData[newSearch]!.isEmpty || (daSublist.isNotEmpty)){
               searches.add(newSearch);
@@ -297,6 +296,7 @@ class Translator{
         var found = false;
         for(var v in data.values) {
           if(searches.contains(v["word"])){
+            bool notGoofy = true;
             String def = v["definition"];
             if(def.startsWith(v["word"])){
               def = def.split(" ").sublist(1,def.split(" ").length).join(" ");
@@ -312,9 +312,26 @@ class Translator{
               dynamic mData = matchData[v["word"]]![i];
               dynamic gData = moreData[v["word"]]![i];
               String newDef = def;
-              if(guessedType == 0 || gData == 0 || guessedType == gData.round()){
+              //Check if nouns adopted verb suffixes/prefixes
+              if(guessedType == 1){
+                for(int j = 0; j < mData.length; j++){
+                  String particle = mData[j][0];
+                  String type = "";
+                  if(Stemmer.typeData.containsKey(particle)){
+                    type = Stemmer.typeData[mData[j][0]]!;
+                  }
+                  if(type != "" && type != "prefix" && type != "suffix"){
+                    notGoofy = false;
+                    break;
+                  }
+                }
+              }
+              if(guessedType == 0 || gData == 0 || guessedType == gData.round() && notGoofy){
                 double actualgData = max(guessedType.toDouble(), gData);
-                matches.add([v["word"],newDef,mData, word, actualgData]);
+                List finalList = [v["word"],newDef,mData, word, actualgData];
+                if(!BgScripts.listContains(matches, finalList)){
+                  matches.add(finalList);
+                }
                 found = true;
               }
             }

@@ -52,8 +52,12 @@ class Stemmer{
 
   static List<dynamic> suffixes(String word, [bool isVerb = false]){
     if(!isVerb){
+      bool yes = false;
       List thing1 = _stemming(stemData["suffixes"]["regex"], stemData["suffixes"], word);
       List thing2 = _stemming(stemData["suffixes2"]["regex"], stemData["suffixes2"], word);
+      if(thing1.isNotEmpty || thing2.isNotEmpty){
+        yes = true;
+      }
 
       if(thing1[0] == word){
         thing1.clear();
@@ -72,6 +76,9 @@ class Stemmer{
             }
           }
         }
+      }
+      if(yes){
+        thing1.removeWhere((element) => element == word);
       }
       return thing1;
     }else{
