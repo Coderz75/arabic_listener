@@ -10,6 +10,15 @@ class RootInfo extends StatelessWidget {
 
   final List verbNounWithRoot;
   final HomePageState home;
+  double getTextHeight(String text, TextStyle style) {
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      maxLines: 1,
+      textDirection: TextDirection.ltr,
+    )..layout();
+
+    return textPainter.size.height;
+  }
   @override
   Widget build(BuildContext context) {
     String def = home.getDataFromWord(verbNounWithRoot[1]);
@@ -18,17 +27,19 @@ class RootInfo extends StatelessWidget {
       child: Row(
         children: [
           const Text("Root: "),
-          OutlinedButton(
-            onPressed:() async {
-              return showDialog<void>(
-              context: context,
-              barrierDismissible: true, // user must tap button!
-              builder: (BuildContext context) {
-                return RootDialog(verbNounWithRoot: verbNounWithRoot, def: def);
+          SizedBox(
+            child: OutlinedButton(
+              onPressed:() async {
+                return showDialog<void>(
+                context: context,
+                barrierDismissible: true, // user must tap button!
+                builder: (BuildContext context) {
+                  return RootDialog(verbNounWithRoot: verbNounWithRoot, def: def);
+                },
+              );
               },
-            );
-            },
-            child: Text("${verbNounWithRoot[1]}")
+              child: Text("${verbNounWithRoot[1]}")
+            ),
           ),
         ],
       )
