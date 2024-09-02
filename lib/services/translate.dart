@@ -26,7 +26,8 @@ class Translator{
   String oldInput = "";
 
 
-  List<List> _possibilityScanner(List thing, List<List> possibilities, List prev){
+  List _possibilityScanner(List thing, List possibilities, List prev){
+    possibilities = BgScripts.deepCopy(possibilities);
     prev = BgScripts.deepCopy(prev);
     if(thing.length != 1 && thing.isNotEmpty){
       if(thing[thing.length-1] is List){
@@ -48,7 +49,7 @@ class Translator{
         for(int j = 0; j < other.length; j++){
           thingity.add(other[j]);
         }
-        thingity.add(thing[i][thing[i].length-1]);
+        thingity.add(thing[i][thing[i].length-2]);
         if(!BgScripts.listContains(possibilities,thingity)){
           bool inList = false;
           if(!inList){
@@ -63,7 +64,7 @@ class Translator{
 
   List getAllPossibilities(String word, List prev){
 
-    List<List> possibilities = [];
+    List possibilities = [];
     bool isVerb = false;
     bool mustBeNotVerb = false;
     for(int i = 0; i < prev.length; i++){
@@ -105,6 +106,8 @@ class Translator{
           possibilities.add(prev + [thing[i]] + [thing[i][2]]);
         }
       }
+    }
+    if(!isVerb && mustBeNotVerb){
       thing = Stemmer.verbNouns(word);
       if(thing.isNotEmpty){
         for(int i = 0; i < thing.length; i++){
@@ -115,6 +118,7 @@ class Translator{
     
     for(int i = 0; i < possibilities.length; i++){
       int end = possibilities[i].length - 1;
+      //zz[j].sublist(0,zz[j].length-1);
       List thingy = getAllPossibilities(possibilities[i][end],possibilities[i].sublist(0,end));
       for(int x = 0; x < thingy.length; x++){
         if(!BgScripts.listContains(possibilities,thingy[x])){
@@ -123,6 +127,20 @@ class Translator{
             List finalList = [];
             
             finalList = BgScripts.deepCopy(thingy[x]);
+            bool hasPrev = true;
+            if(prev.length >= finalList.length){
+              hasPrev = false;
+            }else{
+              for(int j = 0; j < prev.length; j++){
+                if(!BgScripts.deepEq(prev[j],finalList[j])){
+                  hasPrev = false;
+                  break;
+                }
+              }
+            }
+            if(!hasPrev){
+              finalList = BgScripts.deepCopy(prev + thingy[x]);
+            }
             possibilities.add(finalList);
           }
         }
@@ -237,7 +255,6 @@ class Translator{
           }
           
         }
-        print(matchData);
         List matches =[];
 
         // 0 = Ambiguous, 1 = ism, 2 = fel/verbNoun, 3 = harf 

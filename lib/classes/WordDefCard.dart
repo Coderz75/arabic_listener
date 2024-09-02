@@ -43,9 +43,8 @@ class WordDefCard extends StatelessWidget {
       }
       return aIndex.compareTo(bIndex);
     });
-    int daIndex = parsedData.length - 1;
-    String verbText = parsedData[daIndex][parsedData[daIndex].length - 1];
     bool reachedDaVerb = false;
+    String verbText = "";
     for(int i = 0; i < parsedData.length; i++){
       String particle = parsedData[i][0];
       dynamic pDef = parsedData[i][1];
@@ -63,6 +62,13 @@ class WordDefCard extends StatelessWidget {
       }
       String daText = particle;
       if(particle == word){
+        if(verbText == ""){
+          if(parsedData[i].length > 3){
+            verbText = parsedData[i][3];
+          }else{
+            verbText = word;
+          }
+        }
         daText = verbText;
       }
       if(!reachedDaVerb || particle != word){
@@ -104,6 +110,7 @@ class WordDefCard extends StatelessWidget {
     }
     _text.clear();
     _more.clear();
+    print(fullData);
     if(data.isNotEmpty){
       if(fullData[4] == 2){
         addText("Verb",BgScripts.verbDataOrder,const TextStyle(fontWeight: FontWeight.bold, color: Colors.green));

@@ -35,7 +35,7 @@ class Stemmer{
       String z = reg.replaceAll(RegExp(r'&'), item.key);
       String x = removeAll(word, RegExp(z, unicode: true),xdata["matches"]);
       if(x != word){
-        result.add([item.key, item.value, x]);
+        result.add([item.key, item.value, x, word]);
         word = x;
       }
     }
@@ -94,7 +94,7 @@ class Stemmer{
       if(r.hasMatch(word)){
         final match = r.firstMatch(word);
         final matchedText = match?.group(1); 
-        result.add(["Verb",item.value,matchedText]);
+        result.add(["Verb",item.value,matchedText,word]);
       }
     }
     return result;
@@ -110,7 +110,7 @@ class Stemmer{
       if(r.hasMatch(word)){
         final match = r.firstMatch(word);
         final matchedText = match?.groups(item.value[0]).join(""); 
-        result.add(["verbNoun",item.value[1],matchedText]);
+        result.add(["verbNoun",item.value[1],matchedText,word]);
       }
     }
     return result;
@@ -192,8 +192,8 @@ class Stemmer{
   }
 
   static Map<String, dynamic> verbNounsData = { // Verb nouns for only the 3 letter roots
-    "(.)ا(..)\$": [[1,2], "Active Noun - The one doing the action"],
-    "(.)ا(..)ة\$": [[1,2], "Active Noun - The one doing the action (f)"],
+    "^(.)ا(..)\$": [[1,2], "Active Noun - The one doing the action"],
+    "^(.)ا(..)ة\$": [[1,2], "Active Noun - The one doing the action (f)"],
   };
   static Map<String,dynamic> wordTenseData = {}; // Fills baed on wordTense.json
 
@@ -246,6 +246,7 @@ class Stemmer{
         "ها": "Hers (posession)",
         "هم": "Their (posession)",
         "ي": "My (posession)",
+        "ك": "Your (posession)",
       }
     },
     "verbSuffix":{ 
