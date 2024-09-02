@@ -107,7 +107,7 @@ class Translator{
         }
       }
     }
-    if(!isVerb && mustBeNotVerb){
+    if(!isVerb){
       thing = Stemmer.verbNouns(word);
       if(thing.isNotEmpty){
         for(int i = 0; i < thing.length; i++){
