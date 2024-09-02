@@ -29,12 +29,15 @@ class WordDefCard extends StatelessWidget {
   void addText(String type, List ordering, TextStyle mainStyle){
     String usedDef = def;
     List verbNounWithRoot = [false,null];
-    if(type == "verbNoun" && def.contains("<b>")){
-      usedDef = def.split(RegExp(r"<b>(.*)</b>"))[0];
-    }else{
-      String theRoot = data[data.length-1][2];
-      verbNounWithRoot = [true,theRoot];
+    if(type == "verbNoun"){
+      if(def.contains("<b>")){
+        usedDef = def.split(RegExp(r"<b>(.*)</b>"))[0];
+      }else{
+        String theRoot = data[data.length-1][2];
+        verbNounWithRoot = [true,theRoot];
+      }
     }
+      
     TextSpan spacer = const TextSpan(text: "·", style: TextStyle(fontWeight: FontWeight.bold));
     //parsing order
     List parsedData = BgScripts.deepCopy(data);
