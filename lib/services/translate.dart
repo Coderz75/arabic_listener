@@ -29,7 +29,7 @@ class Translator{
   List _possibilityScanner(List thing, List possibilities, List prev){
     possibilities = BgScripts.deepCopy(possibilities);
     prev = BgScripts.deepCopy(prev);
-    if(thing.length != 1 && thing.isNotEmpty){
+    if(thing[0] is List && thing.isNotEmpty){
       if(thing[thing.length-1] is List){
         thing.add(thing[thing.length-1][2]);
       }
@@ -39,6 +39,7 @@ class Translator{
           possibilities.add(prev + thing);
         }
       }
+      
       List<List> other = [];
       for(int i = 0; i < thing.length-1; i++){
         other.add(thing[i]);
@@ -51,11 +52,7 @@ class Translator{
         }
         thingity.add(thing[i][thing[i].length-2]);
         if(!BgScripts.listContains(possibilities,thingity)){
-          bool inList = false;
-          if(!inList){
-            possibilities.add(thingity);
-          }
-          
+          possibilities.add(thingity);          
         }
       }
     }
@@ -91,7 +88,7 @@ class Translator{
     thing = Stemmer.prefixes(word, isVerb);
     possibilities = _possibilityScanner(thing,possibilities,prev);
     thing = Stemmer.suffixes(word,isVerb);
-    possibilities = _possibilityScanner(thing,possibilities,prev);
+    possibilities = _possibilityScanner(BgScripts.deepCopy(thing),possibilities,prev);
     if(!isVerb && !mustBeNotVerb){
       thing = Stemmer.prefixes(word,true);
       possibilities = _possibilityScanner(thing,possibilities,prev);
@@ -157,7 +154,6 @@ class Translator{
   }
 
   List translate(String input){
-    print(Stemmer.suffixes("الميروفكما"));
     List wordData =[];
     Map<int,int> newPicks = {};
     List inputList = input.split(' ');
@@ -315,18 +311,22 @@ class Translator{
               //Check if nouns adopted verb suffixes/prefixes
               if(guessedType == 1){
                 for(int j = 0; j < mData.length; j++){
-                  String particle = mData[j][0];
-                  String type = "";
-                  if(Stemmer.typeData.containsKey(particle)){
-                    type = Stemmer.typeData[mData[j][0]]!;
+                  String pDef = mData[j][1];
+                  for (MapEntry<String, dynamic> item in Stemmer.stemData["verbPrefix"]["items"].entries) {
+                    if(pDef == item.value) {
+                      notGoofy = false;
+                      break;
+                    }
                   }
-                  if(type != "" && type != "prefix" && type != "suffix"){
-                    notGoofy = false;
-                    break;
+                  for (MapEntry<String, dynamic> item in Stemmer.stemData["verbSuffix"]["items"].entries) {
+                    if(pDef == item.value) {
+                      notGoofy = false;
+                      break;
+                    }
                   }
                 }
               }
-              if(guessedType == 0 || gData == 0 || guessedType == gData.round() && notGoofy){
+              if(notGoofy && (guessedType == 0 || gData == 0 || guessedType == gData.round())){
                 double actualgData = max(guessedType.toDouble(), gData);
                 List finalList = [v["word"],newDef,mData, word, actualgData];
                 if(!BgScripts.listContains(matches, finalList)){
