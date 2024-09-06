@@ -81,6 +81,12 @@ class Translator{
             break;
           }
         }
+        for (MapEntry<String, dynamic> item in Stemmer.stemData["suffixes2"]["items"].entries) {
+          if(prev[i][1] == item.value) {
+            mustBeNotVerb = true;
+            break;
+          }
+        }
       }
       
     }
@@ -104,7 +110,12 @@ class Translator{
         }
       }
     }
+    print(word);
+    print(isVerb);
+    print(mustBeNotVerb);
+    print(prev);
     if(!isVerb && (mustBeNotVerb || prev.isEmpty)){
+      print("yes");
       thing = Stemmer.verbNouns(word);
       if(thing.isNotEmpty){
         for(int i = 0; i < thing.length; i++){
