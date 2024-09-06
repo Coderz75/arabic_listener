@@ -28,14 +28,15 @@ class Stemmer{
 
   static List<dynamic> _stemming(String reg, Map<String,dynamic> xdata, String word){
     List<dynamic> result = [];
+    String ogWord = word;
     for (MapEntry<String, dynamic> item in xdata["items"].entries) {
       if(word.length < xdata["length"]){
         break;
       }
       String z = reg.replaceAll(RegExp(r'&'), item.key);
-      String x = removeAll(word, RegExp(z, unicode: true),xdata["matches"]);
-      if(x != word){
-        result.add([item.key, item.value, x, word]);
+      String x = removeAll(ogWord, RegExp(z, unicode: true),xdata["matches"]);
+      if(x != ogWord){
+        result.add([item.key, item.value, x, ogWord]);
         word = x;
       }
     }
@@ -53,27 +54,6 @@ class Stemmer{
   static List<dynamic> suffixes(String word, [bool isVerb = false]){
     if(!isVerb){
       List thing1 = _stemming(stemData["suffixes"]["regex"], stemData["suffixes"], word);
-      List thing2 = _stemming(stemData["suffixes2"]["regex"], stemData["suffixes2"], word);
-
-      if(thing1[0] == word){
-        thing1.clear();
-      }
-      for(int i = 0; i < thing1.length; i++){
-        if(thing1[i][2].isEmpty){
-          thing1.removeAt(i);
-          i--;
-        }
-      }
-      for(dynamic x in thing2){
-        if(x.isNotEmpty){
-          if(!thing1.contains(x)){
-            if(x == word ||(x is List<dynamic> && x[2].isNotEmpty)){
-              thing1.add(x);
-            }
-          }
-        }
-      }
-
       return thing1;
     }else{
       List thing1 = _stemming(stemData["verbSuffix"]["regex"], stemData["verbSuffix"], word);
@@ -193,8 +173,13 @@ class Stemmer{
   }
 
   static Map<String, dynamic> verbNounsData = { // Verb nouns for only the 3 letter roots
-    "^(.)ا(..)\$": [[1,2], "Active Noun - The one doing the action"],
+    "^م(..)و(.)ة\$": [[1,2], "Passive Noun - object upon whom the action is done (f)"],
+    "^(.)ا(..)ات\$": [[1,2], "Active Noun - The one doing the action (f)"],
+    "^م(..)و(.)ات\$": [[1,2], "Passive Noun - object upon whom the action is done (f)"],
     "^(.)ا(..)ة\$": [[1,2], "Active Noun - The one doing the action (f)"],
+    "^(.)ا(..)\$": [[1,2], "Active Noun - The one doing the action"],
+    "^م(..)و(.)\$": [[1,2], "Passive Noun - object upon whom the action is done."],
+
   };
   static Map<String,dynamic> wordTenseData = {}; // Fills baed on wordTense.json
 
@@ -218,29 +203,21 @@ class Stemmer{
       "type": "suffix",
       "regex": r"^(.*)(?=&$)",
       "matches": [1],
-      "length": 5,
+      "length": 3,
       "items": {
         "كما": "You (dual)",
         "تان": "Dual (feminine)",
         "هما": "They (dual)",
         "تين": "They (dual)",
         "تما": "You (dual)",
-      }
-    },
-    "suffixes2":{ 
-      "type": "suffix",
-      "regex": r"^(.*)(?=&$)",
-      "matches": [1],
-      "length": 3,
-      "items": {
         "ون": "Masculine plural",
         "ان": "Masculine Dual",
+        "ات": "Feminine plural",
         "ين": "Masculine plural",
         "كم": "Your (posession)",
         "هن": "Their (posession)",
         "نا": "Our (posession)",
         "تم": "You (subject)",
-        "ات": "Feminine plural",
         //"يا": "Masculine Dual",
         "كن": "Your (posession)",
         //"ما": ["Your (posession)", "You (object)"],

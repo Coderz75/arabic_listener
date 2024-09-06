@@ -40,15 +40,10 @@ class Translator{
         }
       }
       
-      List<List> other = [];
       for(int i = 0; i < thing.length-1; i++){
-        other.add(thing[i]);
         List thingity = [];
         for(dynamic val in prev){
           thingity.add(val);
-        }
-        for(int j = 0; j < other.length; j++){
-          thingity.add(other[j]);
         }
         thingity.add(thing[i][thing[i].length-2]);
         if(!BgScripts.listContains(possibilities,thingity)){
@@ -81,12 +76,6 @@ class Translator{
             break;
           }
         }
-        for (MapEntry<String, dynamic> item in Stemmer.stemData["suffixes2"]["items"].entries) {
-          if(prev[i][1] == item.value) {
-            mustBeNotVerb = true;
-            break;
-          }
-        }
       }
       
     }
@@ -110,12 +99,7 @@ class Translator{
         }
       }
     }
-    print(word);
-    print(isVerb);
-    print(mustBeNotVerb);
-    print(prev);
     if(!isVerb && (mustBeNotVerb || prev.isEmpty)){
-      print("yes");
       thing = Stemmer.verbNouns(word);
       if(thing.isNotEmpty){
         for(int i = 0; i < thing.length; i++){
@@ -261,6 +245,7 @@ class Translator{
           }
           
         }
+
         List matches =[];
 
         // 0 = Ambiguous, 1 = ism, 2 = fel/verbNoun, 3 = harf 
@@ -322,7 +307,12 @@ class Translator{
               //Check if nouns adopted verb suffixes/prefixes
               if(guessedType == 1){
                 for(int j = 0; j < mData.length; j++){
-                  String pDef = mData[j][1];
+                  String pDef = "";
+                  if(mData[j][1] is List){
+                    pDef = mData[j][1].join("/");
+                  }else{
+                    pDef = mData[j][1];
+                  }
                   for (MapEntry<String, dynamic> item in Stemmer.stemData["verbPrefix"]["items"].entries) {
                     if(pDef == item.value) {
                       notGoofy = false;
@@ -348,7 +338,7 @@ class Translator{
             }
           }
         }
-        
+
         if(!found){
           wordData.add([word, "No data", [], word, 0]);
         }else{

@@ -35,9 +35,6 @@ class BgScripts{
     for (MapEntry<String, dynamic> group in Stemmer.stemData["suffixes"]["items"].entries) {
       suffixes.add(group.key);
     }
-    for (MapEntry<String, dynamic> group in Stemmer.stemData["suffixes2"]["items"].entries) {
-      suffixes.add(group.key);
-    }
     verbNounDataOrder.add(suffixes);
   }
   
