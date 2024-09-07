@@ -174,8 +174,6 @@ class Stemmer{
 
   static Map<String, dynamic> verbNounsData = { // Verb nouns for only the 3 letter roots
     "^م(..)و(.)ة\$": [[1,2], "Passive Noun - object upon whom the action is done (f)"],
-    "^(.)ا(..)ات\$": [[1,2], "Active Noun - The one doing the action (f)"],
-    "^م(..)و(.)ات\$": [[1,2], "Passive Noun - object upon whom the action is done (f)"],
     "^(.)ا(..)ة\$": [[1,2], "Active Noun - The one doing the action (f)"],
     "^(.)ا(..)\$": [[1,2], "Active Noun - The one doing the action"],
     "^م(..)و(.)\$": [[1,2], "Passive Noun - object upon whom the action is done."],
@@ -225,6 +223,7 @@ class Stemmer{
         "هم": "Their (posession)",
         "ي": "My (posession)",
         "ك": "Your (posession)",
+        "ة": "Feminine"
       }
     },
     "verbSuffix":{ 

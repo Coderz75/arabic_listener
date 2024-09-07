@@ -55,7 +55,7 @@ class Translator{
   }
 
   List getAllPossibilities(String word, List prev){
-
+    print("Word: $word ; Prev: $prev");
     List possibilities = [];
     bool isVerb = false;
     bool mustBeNotVerb = false;
@@ -110,8 +110,11 @@ class Translator{
     
     for(int i = 0; i < possibilities.length; i++){
       int end = possibilities[i].length - 1;
-      //zz[j].sublist(0,zz[j].length-1);
-      List thingy = getAllPossibilities(possibilities[i][end],possibilities[i].sublist(0,end));
+      List daSublist = possibilities[i].sublist(0,end);
+      if(daSublist.isEmpty){
+        continue;
+      }
+      List thingy = getAllPossibilities(possibilities[i][end],daSublist);
       for(int x = 0; x < thingy.length; x++){
         if(!BgScripts.listContains(possibilities,thingy[x])){
           bool inList = false;
@@ -352,6 +355,9 @@ class Translator{
             String lastWord = "";
             int lastIndex = 0;
             List isVerbNoun = [false,null,null];
+            matches.sort((b,a){
+              return a[4].compareTo(b[4]);
+            });
             for(int i = 0; i < matches.length; i++){
               var z = matches[i];
               if(z[0] == lastWord){
@@ -369,7 +375,11 @@ class Translator{
                 }
               }else if(z[4] == 2.1){
                 int li = z[2].length - 1;
-                isVerbNoun = [true, i, z[2][li][z[2][li].length - 1]];
+                String daWord = z[2][li][z[2][li].length - 1];
+                if(daWord.endsWith("ة")){
+                  daWord = daWord.substring(0,daWord.length-1);
+                }
+                isVerbNoun = [true, i,daWord];
               }
               var masdr = getMasdr(z[1]);
               var wordHarakat = getHarakat(word, masdr);
