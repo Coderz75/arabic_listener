@@ -1,6 +1,6 @@
 import 'package:arabic_listener/classes/HomePage.dart';
 import 'package:flutter/material.dart';
-
+import '../services/translate.dart';
 class RootInfo extends StatelessWidget {
   const RootInfo({
     super.key,
@@ -19,9 +19,25 @@ class RootInfo extends StatelessWidget {
 
     return textPainter.size.height;
   }
+  String getDataFromWord(String word){
+    String x = "";
+    bool found = false;
+    for(var v in Translator.data.values) {
+      if(v["word"] == word){
+        found = true;
+        x = v["definition"];
+        break;
+      }
+    }
+    if(!found){
+      return "Unable to find word in dictionary";
+    }else{
+      return x;
+    }
+  }
   @override
   Widget build(BuildContext context) {
-    String def = home.getDataFromWord(verbNounWithRoot[1]);
+    String def = getDataFromWord(verbNounWithRoot[1]);
     return Align(
       alignment: Alignment.topLeft,
       child: Row(

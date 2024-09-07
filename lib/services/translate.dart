@@ -1,20 +1,12 @@
 import 'package:arabic_listener/services/bg.dart';
 import 'dart:math';
 import 'stemmer.dart';
-import 'package:flutter/services.dart';
-import 'dart:convert';
+
 
 class Translator{
-  Map<String,dynamic> data ={};
-  Translator(){
-    init();
-  }
-  void init() async {
-    String response = await rootBundle.loadString('assets/new_data.json');
-    data = await json.decode(response);
-    response = await rootBundle.loadString('assets/wordTense.json');
-    Stemmer.wordTenseData = await json.decode(response) ;
-  }
+  static Map<String,dynamic> data ={};
+  Translator();
+
   String getMasdr(String x){
     if(x.split(" ").length > 1){
       String thing = x.split(" ")[1];
@@ -55,7 +47,6 @@ class Translator{
   }
 
   List getAllPossibilities(String word, List prev){
-    print("Word: $word ; Prev: $prev");
     List possibilities = [];
     bool isVerb = false;
     bool mustBeNotVerb = false;

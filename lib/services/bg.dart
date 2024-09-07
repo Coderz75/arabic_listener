@@ -1,5 +1,8 @@
 import 'package:collection/collection.dart';
 import '../services/stemmer.dart';
+import '../services/translate.dart';
+import 'package:flutter/services.dart';
+import 'dart:convert';
 
 class BgScripts{
   static Map<int,int> picked={};
@@ -7,7 +10,7 @@ class BgScripts{
   static List verbNounDataOrder = [];
   static Function deepEq = const DeepCollectionEquality().equals;
   
-  static void init(){
+  static Future<int> init() async{
     for (MapEntry<String, dynamic> group in Stemmer.stemData.entries) {
       for (MapEntry<String, dynamic> item in group.value["items"].entries) {
         Stemmer.typeData[item.key] = group.value["type"];
@@ -36,6 +39,12 @@ class BgScripts{
       suffixes.add(group.key);
     }
     verbNounDataOrder.add(suffixes);
+
+    String response = await rootBundle.loadString('assets/new_data.json');
+    Translator.data = await json.decode(response);
+    response = await rootBundle.loadString('assets/wordTense.json');
+    Stemmer.wordTenseData = await json.decode(response) ;
+    return 1;
   }
   
   static void picker(int x, int y){

@@ -38,22 +38,6 @@ class HomePageState extends State<HomePage> {
     BgScripts.init();
   }
 
-  String getDataFromWord(String word){
-    String x = "";
-    bool found = false;
-    for(var v in translator.data.values) {
-      if(v["word"] == word){
-        found = true;
-        x = v["definition"];
-        break;
-      }
-    }
-    if(!found){
-      return "Unable to find word in dictionary";
-    }else{
-      return x;
-    }
-  }
 
   /// Each time to start a speech recognition session
   void _startListening() async {
@@ -130,87 +114,92 @@ class HomePageState extends State<HomePage> {
     //double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Arabic Listener'),
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                ToggleSwitch(
-                  initialLabelIndex: 0,
-                  totalSwitches: 2,
-                  activeBgColor: const [Colors.black], 
-                  inactiveBgColor: Colors.grey[850],
-                  labels: const ['Text', 'Speech'],
-                  onToggle: (index) async {
-                    setState(() {
-                      inputType = index as int;
-                    });
-                  },
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(
-                      inputType == 1 ? 'Recognized words:': "Type here:",
-                      style: const TextStyle(fontSize: 30.0),
-                    ),
-                  ),
-                ),
-                if (inputType == 1) Row(
-                      children: [
-                        SizedBox(
-                          width: screenWidth * 0.2,
-                          child: FloatingActionButton(
-                            onPressed:
-                                // If not yet listening for speech start, otherwise stop
-                                _speechToText.isNotListening ? _startListening : _stopListening,
-                            tooltip: 'Listen',
-                            child: inputType == 1 ? Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic) : const Placeholder(),
-                          ),
-                        ),
-                        const Spacer(),
-                        SpeechTextField(speechToText: _speechToText, input: _input, speechEnabled: _speechEnabled),
-                      ],
-                    ) else TextField(
-                    decoration:const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Enter a search term',
-                    ),
-                    onChanged: (text) async {
-                      setState(() {
+    return FutureBuilder<int>(
+      future: Future<int>.sync(BgScripts.init),
+      builder:  (BuildContext context, AsyncSnapshot<int> snapshot) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Arabic Listener'),
+          ),
+          body: Center(
+            child: Column(
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    ToggleSwitch(
+                      initialLabelIndex: 0,
+                      totalSwitches: 2,
+                      activeBgColor: const [Colors.black], 
+                      inactiveBgColor: Colors.grey[850],
+                      labels: const ['Text', 'Speech'],
+                      onToggle: (index) async {
                         setState(() {
-                          _input = text;
-                          wordData = translator.translate(_input);
+                          inputType = index as int;
                         });
-                      });
-                    },
+                      },
+                    ),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(
+                          inputType == 1 ? 'Recognized words:': "Type here:",
+                          style: const TextStyle(fontSize: 30.0),
+                        ),
+                      ),
+                    ),
+                    if (inputType == 1) Row(
+                          children: [
+                            SizedBox(
+                              width: screenWidth * 0.2,
+                              child: FloatingActionButton(
+                                onPressed:
+                                    // If not yet listening for speech start, otherwise stop
+                                    _speechToText.isNotListening ? _startListening : _stopListening,
+                                tooltip: 'Listen',
+                                child: inputType == 1 ? Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic) : const Placeholder(),
+                              ),
+                            ),
+                            const Spacer(),
+                            SpeechTextField(speechToText: _speechToText, input: _input, speechEnabled: _speechEnabled),
+                          ],
+                        ) else TextField(
+                        decoration:const InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Enter a search term',
+                        ),
+                        onChanged: (text) async {
+                          setState(() {
+                            setState(() {
+                              _input = text;
+                              wordData = translator.translate(_input);
+                            });
+                          });
+                        },
+                      ),
+                      if(inputType == 1) const Text(
+                        "WARNING: SPEECH PERFORMANCE MAY VARY",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        )
+                      )
+                
+                  ],
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                        children: wordDef,
+                    ),
                   ),
-                  if(inputType == 1) const Text(
-                    "WARNING: SPEECH PERFORMANCE MAY VARY",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                    )
-                  )
-            
+                )
               ],
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                    children: wordDef,
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
+          ),
+        );
+      }
     );
   }
 }
