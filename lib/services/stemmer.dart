@@ -175,9 +175,13 @@ class Stemmer{
   static Map<String, dynamic> verbNounsData = { // Verb nouns for only the 3 letter roots
     "^م(..)و(.)ة\$": [[1,2], "Passive Noun - object upon whom the action is done (f)"],
     "^(.)ا(..)ة\$": [[1,2], "Active Noun - The one doing the action (f)"],
+    "^م(...)ة\$": [[1], "Location/Instrumental noun - Tool for the action or place of the action (f)"],
+    "^م(.)ا(..)\$": [[1,2], "Location/Instrumental noun - Tool for the action or place of the action (f) (plural)"],
     "^(.)ا(..)\$": [[1,2], "Active Noun - The one doing the action"],
     "^م(..)و(.)\$": [[1,2], "Passive Noun - object upon whom the action is done."],
-
+    "^م(...)\$": [[1], "Location/Instrumental noun - Tool for the action or place of the action"],
+    "^م(..)ا(.)\$": [[1,2], "Instrumental noun - Tool for the action"],
+    "^م(.)ا(.)ي(.)\$": [[1,2,3], "Instrumental noun - Tool for the action (plural)"],
   };
   static Map<String,dynamic> wordTenseData = {}; // Fills baed on wordTense.json
 
