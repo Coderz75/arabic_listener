@@ -76,17 +76,7 @@ class HomePageState extends State<HomePage> {
       wordData = translator.translate(_input);
     });
   }
-/*
-Map<String,dynamic> empty = {
-            "word": word,
-            "def": "No Data",
-            "data": [],
-            "parsedWord": word,
-            "type": 0,
-            "masdr":""
-            "harakat":""
-          };
-           */
+
   @override
   Widget build(BuildContext context) {
     List<Widget> wordDef = [];
@@ -112,7 +102,7 @@ Map<String,dynamic> empty = {
             continue;
           }
         }
-        var word = picked["word"];
+        var word = picked[0];
         var def = picked[1];
 
         wordDef.add(
