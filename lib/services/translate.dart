@@ -323,9 +323,15 @@ class Translator{
               }
               if(notGoofy && (guessedType == 0 || gData == 0 || guessedType == gData.round())){
                 double actualgData = max(guessedType.toDouble(), gData);
-                List finalList = [v["word"],newDef,mData, word, actualgData];
-                if(!BgScripts.listContains(matches, finalList)){
-                  matches.add(finalList);
+                Map<String, dynamic> wordInfo = {
+                  "word": v["word"],
+                  "def": newDef,
+                  "data": mData,
+                  "actualWord": word,
+                  "type": actualgData,
+                };
+                if(!BgScripts.listContains(matches, wordInfo)){
+                  matches.add(wordInfo);
                 }
                 found = true;
               }
@@ -334,7 +340,15 @@ class Translator{
         }
 
         if(!found){
-          wordData.add([word, "No data", [], word, 0]);
+          //[word, "No data", [], word, 0]
+          Map<String,dynamic> empty = {
+            "word": word,
+            "def": "No Data",
+            "data": [],
+            "parsedWord": word,
+            "type": 0,
+          };
+          wordData.add(empty);
         }else{
           if(matches.length == 1){
             wordData.add(matches[0]);
@@ -347,36 +361,36 @@ class Translator{
             int lastIndex = 0;
             List isVerbNoun = [false,null,null];
             matches.sort((b,a){
-              return a[4].compareTo(b[4]);
+              return a["type"].compareTo(b["type"]);
             });
             for(int i = 0; i < matches.length; i++){
               var z = matches[i];
-              if(z[0] == lastWord){
+              if(z["word"] == lastWord){
                 lastIndex++;
               }else{
                 lastIndex = 0;
               }
               if(isVerbNoun[0]){
-                if(z[0] == isVerbNoun[2]){
-                  matches[isVerbNoun[1]][1] = z[1];
+                if(z["word"] == isVerbNoun[2]){
+                  matches[isVerbNoun[1]][1] = z["def"];
                   isVerbNoun = [false,null,null];
                   matches.removeAt(i);
                   i--;
                   continue;
                 }
-              }else if(z[4] == 2.1){
-                int li = z[2].length - 1;
-                String daWord = z[2][li][z[2][li].length - 1];
+              }else if(z["type"] == 2.1){
+                int li = z["data"].length - 1;
+                String daWord = z["data"][li][z["data"][li].length - 1];
                 if(daWord.endsWith("ة")){
                   daWord = daWord.substring(0,daWord.length-1);
                 }
                 isVerbNoun = [true, i,daWord];
               }
               var masdr = getMasdr(z[1]);
-              var wordHarakat = getHarakat(word, masdr);
-              matches[i].add(masdr);
-              matches[i].add(wordHarakat);
-              double similar = BgScripts.stringSimilarity(z[0], word);
+              //var wordHarakat = getHarakat(word, masdr);
+              matches[i]["masdr"] = masdr;
+              matches[i]["harakat"] = z["word"];
+              double similar = BgScripts.stringSimilarity(z["word"], word);
               similarity.add(similar);
               if(similar > best){
                 best = similar;
@@ -384,7 +398,7 @@ class Translator{
               }else if (similar == best){
                 guessedI = -1;
               }
-              if(moreData[z[0]]![lastIndex].round() == probableWord.round()){
+              if(moreData[z["word"]]![lastIndex].round() == probableWord.round()){
                 probables.add(i);
               }
             }
@@ -405,8 +419,6 @@ class Translator{
                 BgScripts.picked[wordI] = guessedI;
               }
             }
-
-
             wordData.add(matches);
           }
         }
@@ -415,7 +427,7 @@ class Translator{
 
     return wordData;
   }
-
+/*
   String getHarakat(String word, String masdr){
     String finalWord = "";
     word = Stemmer.removeAllHarakat(word);
@@ -482,7 +494,7 @@ class Translator{
     }
     return finalWord;
   }
-
+*/
   Map<String,List> transliteration = {
     "ا":["a"],
     "ب":["b"],

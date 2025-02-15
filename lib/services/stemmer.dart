@@ -183,6 +183,11 @@ class Stemmer{
     "^م(..)ا(.)\$": [[1,2], "Instrumental noun - Tool for the action"],
     "^م(.)ا(.)ي(.)\$": [[1,2,3], "Instrumental noun - Tool for the action (plural)"],
   };
+
+  static Map<String, dynamic> verbMoreData = {
+    
+  };
+
   static Map<String,dynamic> wordTenseData = {}; // Fills baed on wordTense.json
 
   static Map<String,String> typeData = {}; // Automatically fills via stemdata during initilization (view bg.dart)
